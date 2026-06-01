@@ -18,4 +18,9 @@
     <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Media\" />
+    <Folder Include="wwwroot\MediaFunctional\" />
+  </ItemGroup>
+
 </Project>

@@ -69,3 +69,18 @@ body {
     padding: 30px;
     background-color: #f8fafc;
 }
+
+.products-page {
+    width: 100%;
+}
+
+.products-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.search-bar {
+    max-width: 400px;
+}
