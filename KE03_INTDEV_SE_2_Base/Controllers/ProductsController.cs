@@ -14,10 +14,17 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
             _productRepository = productRepository;
         }
 
-    public IActionResult Index()
+    public IActionResult Index(string search)
         {
-            var products = _productRepository.GetAllProducts().OrderBy(p => p.Id).ToList();
-            return View(products);
+            var products = _productRepository.GetAllProducts();
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                products = products.Where(p => p.Name.ToLower().Contains(search.ToLower()));
+            }
+
+            var result = products.OrderBy(p => p.Id).ToList();
+            ViewBag.Search = search;
+            return View(result);
         }
     }
 }

@@ -9,12 +9,12 @@
         Producten
     </h1>
 
-    <div class="products-toolbar">
-        <input type="text" class="form-control search-bar" placeholder="zoek product"/>
-        <button class="btn btn-primary">
-            Product Aanmaken
+    <form method="get" class="products-toolbar">
+        <input type="text" name="search" value="@ViewBag.Search" class="form-control search-bar" placeholder="zoek product"/>
+        <button type="submit" class="btn btn-primary">
+            Product aanmaken
         </button>
-    </div>
+    </form>
 
     <div class="card shadow-sm mt-4">
         <div class="card-body p-0">
