@@ -20,9 +20,19 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
         }
 
         // GET: Customers
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search)
         {
-            return View(await _context.Customers.ToListAsync());
+            var query = _context.Customers.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(c => c.Name.Contains(search) || c.Address.Contains(search) || c.Active.ToString().Contains(search));
+            }
+
+            ViewBag.Search = search;
+            var customers = await query.OrderBy(c => c.Id).ToListAsync();
+
+            return View(customers);
         }
 
         // GET: Customers/Details/5
