@@ -23,7 +23,8 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                query = query.Where(p => p.Name.Contains(search) || p.Description.Contains(search) || p.Price.ToString().Contains(search));
+                search = search.Trim().ToLower();
+                query = query.Where(p => (p.Id.ToString() ?? "").Contains(search) || (p.Name ?? "").ToLower().Contains(search) || p.Price.ToString().Contains(search) || (p.Description ?? "").ToLower().Contains(search));
             }
 
             ViewBag.Search = search;
