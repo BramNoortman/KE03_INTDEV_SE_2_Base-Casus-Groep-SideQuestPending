@@ -18,9 +18,8 @@ namespace DataAccessLayer.Models
 
         [Required]
         public int CustomerId { get; set; }
-        
-        [Required]
-        public Customer Customer { get; set; } = null!;
+
+        public Customer? Customer { get; set; }
 
         public ICollection<Product> Products { get; } = new List<Product>();
     }

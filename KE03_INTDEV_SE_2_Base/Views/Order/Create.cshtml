@@ -10,33 +10,36 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group mb-3">
                 <label asp-for="OrderDate" class="control-label"></label>
-                <input asp-for="OrderDate" class="form-control" />
+                <input asp-for="OrderDate" type="datetime-local" class="form-control" />
                 <span asp-validation-for="OrderDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Customer" class="control-label"></label>
-                <input asp-for="Customer" class="form-control" />
-                <span asp-validation-for="Customer" class="text-danger"></span>
+            <div class="form-group mb-3">
+                <label asp-for="CustomerId" class="control-label"></label>
+                <select asp-for="CustomerId" asp-items="@(ViewData["CustomerList"] as SelectList)" class="form-control"></select>
+                <span asp-validation-for="CustomerId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="form-group mb-3">
+                <label>Products</label>
+                <select name="selectedProducts" multiple class="form-control">
+                    @foreach (var p in (IEnumerable<DataAccessLayer.Models.Product>)ViewData["ProductListItems"])
+                    {
+                        <option value="@p.Id">@p.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group mb-3">
+                <input type="submit" value="Save" class="btn btn-primary me-2" />
+                <a asp-action="Index" class="btn btn-warning">Exit Without Saving</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to Orders</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

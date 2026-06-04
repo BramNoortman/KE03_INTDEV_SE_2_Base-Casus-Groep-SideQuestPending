@@ -11,7 +11,7 @@
 
     <form method="get" class="products-toolbar">
         <input type="text" name="search" value="@ViewBag.Search" class="form-control search-bar" placeholder="zoek order"/>
-        <a asp-action="Create" class="btn btn-primary">Nieuwe Order</a>
+        <a asp-action="Create" class="btn btn-primary me-2">Nieuwe Order</a>
     </form>
 
     <div class="card shadow-sm mt-4">
@@ -39,10 +39,10 @@
                             <td>@order.Customer.Name</td>
 
                             <td class="text-end">
-                                <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-primary">
+                                <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-primary me-2">
                                     Details
                                 </a>
-                                <a asp-action="Edit" asp-route-id="@order.Id" class="btn btn-warning">
+                                <a asp-action="Edit" asp-route-id="@order.Id" class="btn btn-warning me-2">
                                     Bewerken
                                 </a>
                                 <a asp-action="Delete" asp-route-id="@order.Id" class="btn btn-danger">
