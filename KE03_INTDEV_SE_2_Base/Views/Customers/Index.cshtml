@@ -1,4 +1,5 @@
-﻿@model IEnumerable<DataAccessLayer.Models.Customer>
+﻿@using DataAccessLayer.Models
+@model IEnumerable<DataAccessLayer.Models.Customer>
 
 @{
     ViewData["Title"] = "Klanten overview";
@@ -68,6 +69,7 @@
                         <th>Klanten naam</th>
                         <th>Adress</th>
                         <th>Active</th>
+                        <th>Orders</th>
                         <th class="text-end">
                             Acties
                         </th>
@@ -81,6 +83,8 @@
                             <td>@customer.Id</td>
                             <td>@customer.Name</td>
                             <td>@customer.Active</td>
+                            @* <td>@customer.Orders</td> *@
+                            <td>@customer.Orders.Count</td>
 
                             <td class="text-end">
                                 <button class="btn btn-warning btn-sm me-2">
