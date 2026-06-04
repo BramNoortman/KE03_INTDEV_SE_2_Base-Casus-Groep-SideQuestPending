@@ -21,6 +21,7 @@ namespace DataAccessLayer.Models
 
         public Customer? Customer { get; set; }
 
-        public ICollection<Product> Products { get; } = new List<Product>();
+        // replace many-to-many with explicit join OrderItem to store quantity
+        public ICollection<OrderItem> Items { get; } = new List<OrderItem>();
     }
 }

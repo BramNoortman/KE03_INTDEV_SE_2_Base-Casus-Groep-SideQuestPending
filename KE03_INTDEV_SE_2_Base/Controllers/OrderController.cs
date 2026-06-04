@@ -48,7 +48,8 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
 
             var order = await _context.Orders
                 .Include(o => o.Customer)
-                .Include(o => o.Products)
+                .Include(o => o.Items)
+                    .ThenInclude(oi => oi.Product)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)
             {
@@ -64,6 +65,7 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
             var customers = await _context.Customers.ToListAsync();
             ViewData["CustomerList"] = new SelectList(customers, "Id", "Name");
             var products = await _context.Products.ToListAsync();
+            _logger.LogInformation("Create GET - products count={Count}", products?.Count ?? 0);
             ViewData["ProductListItems"] = products;
             return View();
         }
@@ -73,7 +75,7 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("OrderDate,CustomerId")] Order order, int[]? selectedProducts)
+        public async Task<IActionResult> Create([Bind("OrderDate,CustomerId")] Order order)
         {
             _logger.LogInformation("Create POST received. Form values: {Form}", Request.Form.ToDictionary(k => k.Key, v => v.Value.ToString()));
             _logger.LogInformation("Bound Order: {@Order}", order);
@@ -81,27 +83,28 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("ModelState invalid on Create: {Errors}", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-                // Reload customers for display
-            var customers = await _context.Customers.ToListAsync();
-            ViewData["CustomerList"] = new SelectList(customers, "Id", "Name", order.CustomerId);
-            var products = await _context.Products.ToListAsync();
-            ViewData["ProductListItems"] = products;
+                // Reload customers and products for display
+                var customers = await _context.Customers.ToListAsync();
+                ViewData["CustomerList"] = new SelectList(customers, "Id", "Name", order.CustomerId);
+                var products = await _context.Products.ToListAsync();
+                ViewData["ProductListItems"] = products;
                 return View(order);
             }
 
-            // attach selected products
-            if (selectedProducts != null && selectedProducts.Length > 0)
+            // read quantities for all products and add items with qty>0
+            var allProducts = await _context.Products.Select(p => p.Id).ToListAsync();
+            foreach (var pid in allProducts)
             {
-                var products = await _context.Products.Where(p => selectedProducts.Contains(p.Id)).ToListAsync();
-                foreach (var p in products)
+                var qtyStr = Request.Form[$"quantity_{pid}"] .FirstOrDefault();
+                if (int.TryParse(qtyStr, out var qty) && qty > 0)
                 {
-                    order.Products.Add(p);
+                    order.Items.Add(new OrderItem { ProductId = pid, Quantity = qty });
                 }
             }
 
             _context.Add(order);
             await _context.SaveChangesAsync();
-            _logger.LogInformation("Order created with Id {Id}", order.Id);
+            _logger.LogInformation("Order created with Id {Id} and {Count} items", order.Id, order.Items.Count);
             return RedirectToAction(nameof(Index));
         }
 
@@ -114,8 +117,8 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
             }
 
             var order = await _context.Orders
-                .Include(o => o.Customer)
-                .Include(o => o.Products)
+                .Include(o => o.Items)
+                    .ThenInclude(oi => oi.Product)
                 .FirstOrDefaultAsync(o => o.Id == id);
             if (order == null)
             {
@@ -133,7 +136,7 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,OrderDate,CustomerId")] Order order, int[]? selectedProducts)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,OrderDate,CustomerId")] Order order)
         {
             if (id != order.Id)
             {
@@ -148,26 +151,34 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
                 try
                 {
                     var existingOrder = await _context.Orders
-                        .Include(o => o.Products)
+                        .Include(o => o.Items)
                         .FirstOrDefaultAsync(o => o.Id == id);
                     if (existingOrder == null)
                     {
                         return NotFound();
                     }
 
-                    // update scalar properties
+                    // update scalar
                     existingOrder.OrderDate = order.OrderDate;
                     existingOrder.CustomerId = order.CustomerId;
 
-                    // update products
-                    if (selectedProducts != null)
+                    // read quantities for all products and replace items accordingly
+                    var allProducts = await _context.Products.Select(p => p.Id).ToListAsync();
+                    var newItems = new List<OrderItem>();
+                    foreach (var pid in allProducts)
                     {
-                        var productsToAssign = await _context.Products.Where(p => selectedProducts.Contains(p.Id)).ToListAsync();
-                        existingOrder.Products.Clear();
-                        foreach (var p in productsToAssign)
+                        var qtyStr = Request.Form[$"quantity_{pid}"] .FirstOrDefault();
+                        if (int.TryParse(qtyStr, out var qty) && qty > 0)
                         {
-                            existingOrder.Products.Add(p);
+                            newItems.Add(new OrderItem { ProductId = pid, Quantity = qty });
                         }
+                    }
+
+                    // replace items
+                    existingOrder.Items.Clear();
+                    foreach (var it in newItems)
+                    {
+                        existingOrder.Items.Add(it);
                     }
 
                     await _context.SaveChangesAsync();

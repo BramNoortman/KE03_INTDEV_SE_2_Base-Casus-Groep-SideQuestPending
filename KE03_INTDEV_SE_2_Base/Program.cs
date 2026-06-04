@@ -40,7 +40,18 @@ namespace KE03_INTDEV_SE_2_Base
                 var services = scope.ServiceProvider;
 
                 var context = services.GetRequiredService<MatrixIncDbContext>();
-                context.Database.EnsureCreated();
+                // In development, recreate the database to pick up model changes (OrderItem added)
+                if (app.Environment.IsDevelopment())
+                {
+                    // WARNING: this will delete existing local data. This is intentional for development convenience.
+                    context.Database.EnsureDeleted();
+                    context.Database.EnsureCreated();
+                }
+                else
+                {
+                    context.Database.EnsureCreated();
+                }
+
                 MatrixIncDbInitializer.Initialize(context);
             }
 

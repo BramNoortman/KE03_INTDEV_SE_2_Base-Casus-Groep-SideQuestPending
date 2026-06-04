@@ -1,4 +1,5 @@
 ﻿@using System.Linq
+@using DataAccessLayer.Models
 @model DataAccessLayer.Models.Order
 
 @{
@@ -10,51 +11,63 @@
 <h4>Order</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Edit" asp-route-id="@(Model?.Id)" method="post">
             @Html.AntiForgeryToken()
             <div asp-validation-summary="All" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group mb-3">
+            <div class="form-group">
                 <label asp-for="OrderDate" class="control-label"></label>
                 <input asp-for="OrderDate" type="datetime-local" class="form-control" />
                 <span asp-validation-for="OrderDate" class="text-danger"></span>
             </div>
-            <div class="form-group mb-3">
+            <div class="form-group">
                 <label asp-for="CustomerId" class="control-label"></label>
                 <select asp-for="CustomerId" asp-items="@(ViewData["CustomerList"] as SelectList ?? new SelectList(Enumerable.Empty<SelectListItem>()))" class="form-control"></select>
                 <span asp-validation-for="CustomerId" class="text-danger"></span>
             </div>
-            <div class="form-group mb-3">
-                <label>Products</label>
+            <div class="form-group">
                 @{
                     var productList = ViewData["ProductListItems"] as IEnumerable<DataAccessLayer.Models.Product> ?? Enumerable.Empty<DataAccessLayer.Models.Product>();
                 }
-                <select name="selectedProducts" multiple class="form-control">
-                    @foreach (var p in productList)
-                    {
-                        var selected = Model?.Products?.Any(mp => mp.Id == p.Id) == true;
-                        if (selected)
+                <div>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th class="text-start">Product</th>
+                                <th class="text-start">Price</th>
+                                <th class="text-end">Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var p in productList)
                         {
-                            <option value="@p.Id" selected>@p.Name</option>
+                            var existingItem = Model?.Items?.FirstOrDefault(it => it.ProductId == p.Id);
+                            var qty = existingItem?.Quantity ?? 0;
+                            <tr>
+                                <td>@p.Name</td>
+                                <td>@(p.Price.ToString("C"))</td>
+                                <td class="text-end">
+                                    <input type="number" name="quantity_@p.Id" value="@qty" min="0" class="form-control" />
+                                </td>
+                            </tr>
                         }
-                        else
-                        {
-                            <option value="@p.Id">@p.Name</option>
-                        }
-                    }
-                </select>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="form-group mb-3">
                 <input type="submit" value="Save" class="btn btn-primary me-2" />
-                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                <a asp-action="Index" class="btn btn-danger me-2">
+                    Exit Without Saving
+                </a>
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Terug naar overzicht</a>
+
 </div>
 
 @section Scripts {

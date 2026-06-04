@@ -16,25 +16,43 @@
             <div class="form-group mb-3">
                 <label asp-for="OrderDate" class="control-label"></label>
                 <input asp-for="OrderDate" type="datetime-local" class="form-control" />
-                <span asp-validation-for="OrderDate" class="text-danger"></span>
+                @*@<span asp-validation-for="OrderDate" class="text-danger"></span>*@
             </div>
             <div class="form-group mb-3">
-                <label asp-for="CustomerId" class="control-label"></label>
+                <label asp-for="Customer" class="control-label"></label>
                 <select asp-for="CustomerId" asp-items="@(ViewData["CustomerList"] as SelectList)" class="form-control"></select>
                 <span asp-validation-for="CustomerId" class="text-danger"></span>
             </div>
             <div class="form-group mb-3">
                 <label>Products</label>
-                <select name="selectedProducts" multiple class="form-control">
-                    @foreach (var p in (IEnumerable<DataAccessLayer.Models.Product>)ViewData["ProductListItems"])
-                    {
-                        <option value="@p.Id">@p.Name</option>
-                    }
-                </select>
+                <div>
+                    <table class="table table-sm">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th style="width:140px">Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var p in (IEnumerable<DataAccessLayer.Models.Product>)ViewData["ProductListItems"])
+                        {
+                            <tr>
+                                <td>@p.Name</td>
+                                <td>@(p.Price.ToString("C"))</td>
+                                <td>
+                                    <input type="number" name="quantity_@p.Id" value="0" min="0" class="form-control" />
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="form-group mb-3">
                 <input type="submit" value="Save" class="btn btn-primary me-2" />
-                <a asp-action="Index" class="btn btn-warning">Exit Without Saving</a>
+                <a asp-action="Index" class="btn btn-danger">Exit Without Saving</a>
             </div>
         </form>
     </div>

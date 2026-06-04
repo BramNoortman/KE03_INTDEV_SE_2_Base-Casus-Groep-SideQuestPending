@@ -17,7 +17,7 @@ namespace DataAccessLayer.Models
 
         public decimal Price { get; set; }
 
-        public ICollection<Order> Orders { get; } = new List<Order>();
+        public ICollection<OrderItem> Orders { get; } = new List<OrderItem>();
 
         public ICollection<Part> Parts { get; } = new List<Part>();
     }
