@@ -26,13 +26,12 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                query = query.Where(c => c.Name.Contains(search) || c.Address.Contains(search) || c.Active.ToString().Contains(search));
+                search = search.Trim().ToLower();
+                query = query.Where(c => (c.Id.ToString() ?? "").Contains(search) || (c.Name ?? "").ToLower().Contains(search) || (c.Address ?? "").ToLower().Contains(search) || c.Active.ToString().Contains(search));
             }
 
             ViewBag.Search = search;
-            var customers = await query.OrderBy(c => c.Id).ToListAsync();
-
-            return View(customers);
+            return View(await query.OrderBy(c => c.Id).ToListAsync());
         }
 
         // GET: Customers/Details/5
