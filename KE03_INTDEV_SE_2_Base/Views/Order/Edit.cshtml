@@ -46,7 +46,7 @@
                             var qty = existingItem?.Quantity ?? 0;
                             <tr>
                                 <td>@p.Name</td>
-                                <td>@(p.Price.ToString("C"))</td>
+                                <td>€@(p.Price.ToString())</td>
                                 <td class="text-end">
                                     <input type="number" name="quantity_@p.Id" value="@qty" min="0" class="form-control" />
                                 </td>
