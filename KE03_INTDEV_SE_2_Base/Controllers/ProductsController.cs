@@ -17,20 +17,38 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index(string search)
+        public async Task<IActionResult> Index(string search, string sortOrder)
         {
             var query = _context.Products.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
                 search = search.Trim().ToLower();
-                query = query.Where(p => (p.Id.ToString() ?? "").Contains(search) || (p.Name ?? "").ToLower().Contains(search) || p.Price.ToString().Contains(search) || (p.Description ?? "").ToLower().Contains(search));
+                decimal priceSearch;
+                bool isPrice = decimal.TryParse(search.Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out priceSearch);
+                query = query.Where(p => (p.Id.ToString() ?? "").Contains(search) || (p.Name ?? "").ToLower().Contains(search) || (isPrice && p.Price >= priceSearch && p.Price < priceSearch + 1) || (p.Description ?? "").ToLower().Contains(search));
             }
 
             ViewBag.Search = search;
-            var products = await query.OrderBy(p => p.Id).ToListAsync();
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.IdSort = sortOrder == "id_desc" ? "" : "id_desc";
+            ViewBag.NameSort = sortOrder == "name" ? "name_desc" : "name";
+            ViewBag.PriceSort = sortOrder == "price" ? "price_desc" : "price";
+            ViewBag.DescriptionSort = sortOrder == "description" ? "description_desc" : "description";
 
-            return View(products);
+            query = sortOrder switch
+            {
+                "id_desc" => query.OrderByDescending(p => p.Id),
+                "name" => query.OrderBy(p => p.Name),
+                "name_desc" => query.OrderByDescending(p => p.Name),
+                "price" => query.OrderBy(p => (double)p.Price), //double fixes sorting because price is deicimal
+                "price_desc" => query.OrderByDescending(p => (double)p.Price),
+                "description" => query.OrderBy(p => p.Description),
+                "description_desc" => query.OrderByDescending(p => p.Description),
+                _ => query.OrderBy(p => p.Id)
+            };
+
+            return View(await query.ToListAsync());
         }
 
         // GET: Products/Details/5

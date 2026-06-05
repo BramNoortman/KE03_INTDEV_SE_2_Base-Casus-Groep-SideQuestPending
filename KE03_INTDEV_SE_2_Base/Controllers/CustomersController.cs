@@ -20,18 +20,37 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
         }
 
         // GET: Customers
-        public async Task<IActionResult> Index(string search)
+        // searchbar & sorting
+        public async Task<IActionResult> Index(string search, string sortOrder)
         {
             var query = _context.Customers.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
                 search = search.Trim().ToLower();
-                query = query.Where(c => (c.Id.ToString() ?? "").Contains(search) || (c.Name ?? "").ToLower().Contains(search) || (c.Address ?? "").ToLower().Contains(search) || c.Active.ToString().Contains(search));
+                query = query.Where(c => c.Id.ToString().Contains(search) || (c.Name ?? "").ToLower().Contains(search) || (c.Address ?? "").ToLower().Contains(search) || c.Active.ToString().Contains(search));
             }
 
             ViewBag.Search = search;
-            return View(await query.OrderBy(c => c.Id).ToListAsync());
+            ViewBag.CurrentSort = sortOrder; //for arrow direction
+            ViewBag.IdSort = sortOrder == "id_desc" ? "" : "id_desc";
+            ViewBag.NameSort = sortOrder == "name" ? "name_desc" : "name";
+            ViewBag.AddressSort = sortOrder == "address" ? "address_desc" : "address";
+            ViewBag.ActiveSort = sortOrder == "active" ? "active_desc" : "active";
+
+            query = sortOrder switch
+            {
+                "id_desc" => query.OrderByDescending(c => c.Id),
+                "name" => query.OrderBy(c => c.Name),
+                "name_desc" => query.OrderByDescending(c => c.Name),
+                "address" => query.OrderBy(c => c.Address),
+                "address_desc" => query.OrderByDescending(c => c.Address),
+                "active" => query.OrderBy(c => c.Active),
+                "active_desc" => query.OrderByDescending(c => c.Active),
+                _ => query.OrderBy(c => c.Id)
+            };
+
+            return View(await query.ToListAsync());
         }
 
         // GET: Customers/Details/5

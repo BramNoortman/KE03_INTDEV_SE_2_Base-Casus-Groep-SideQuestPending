@@ -9,24 +9,82 @@
         Producten
     </h1>
 
+    @*Display searchbar *@
     <div class="d-flex justify-content-between align-items-center products-toolbar">
         <form method="get" class="products-toolbar">
-            <input type="text" name="search" value="@ViewBag.Search" class="form-control search-bar" placeholder="zoek product" />
-            <button type="submit" class="btn btn-secondary">Zoeken</button>
+            <div class="position-relative">
+                <input type="text" name="search" value="@ViewBag.Search" class="form-control search-bar" placeholder="zoek product" />
+                    <a asp-action="Index" class="btn btn-sm btn-light position-absolute top-50 end-0 translate-middle-y me-1">✕</a> @*clear searchbar*@
+            </div> 
+            <button type="submit" class="btn btn-secondary">Product zoeken</button>
         </form>
 
+        @*Make product*@
         <a asp-action="Create" class="btn btn-primary">Product aanmaken</a>
     </div>
 
+    @* Show list of products by id, name, price, etc*@
     <div class="card shadow-sm mt-4">
         <div class="card-body p-0">
             <table class="table table-striped mb-0">
                 <thead class="table-dark">
                     <tr>
-                        <th>ID</th>
-                        <th>Naam</th>
-                        <th>Prijs</th>
-                        <th>Omschrijving</th>
+                        <th>
+                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.IdSort" class="text-white text-decoration-none">
+                                ID
+                                @if (string.IsNullOrEmpty(ViewBag.CurrentSort))
+                                {
+                                    <span>▼</span>
+                                }
+                                else if (ViewBag.CurrentSort == "id_desc")
+                                {
+                                    <span>▲</span>
+                                }
+                            </a>
+                        </th>
+                        <th>
+                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.NameSort" class="text-white text-decoration-none">
+                                Productnaam
+                                @if (ViewBag.CurrentSort == "name")
+                                {
+                                    <span>▲</span>
+                                }
+                                else if (ViewBag.CurrentSort == "name_desc")
+                                {
+                                    <span>▼</span>
+                                }
+                            </a>
+                        </th>
+                        <th>
+                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.PriceSort" class="text-white text-decoration-none">
+                                Productprijs
+                                @if (ViewBag.CurrentSort == "price")
+                                {
+                                    <span>▼</span>
+                                }
+                                else if (ViewBag.CurrentSort == "price_desc")
+                                {
+                                    <span>▲</span>
+                                }
+                            </a>
+                        </th>
+                        <th>
+                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.DescriptionSort" class="text-white text-decoration-none">
+                                Omschrijving
+                                @if (ViewBag.CurrentSort == "description")
+                                {
+                                    <span>▲</span>
+                                }
+                                else if (ViewBag.CurrentSort == "description_desc")
+                                {
+                                    <span>▼</span>
+                                }
+                            </a>
+                        </th>
                         <th style="min-width: 400px" class="text-end">
                             Acties
                         </th>
@@ -39,7 +97,7 @@
                         <tr>
                             <td>@product.Id</td>
                             <td>@product.Name</td>
-                            <td>@product.Price</td>
+                            <td>€@product.Price.ToString("F2")</td>
                             <td>@product.Description</td>
 
                             <td class="text-end">
