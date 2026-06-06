@@ -1,0 +1,108 @@
+@model KE03_INTDEV_SE_2_Base.Models.FinanceViewModel
+
+@{
+    ViewData["Title"] = "Financiën";
+}
+
+<div class="dashboard-header">
+    <h1>Financiën</h1>
+    <p class="text-muted">Overzicht van omzet, winsten en financiële statistieken.</p>
+</div>
+
+<div class="metrics-grid">
+    <div class="metric-card">
+        <div class="metric-icon finance-icon-1">💰</div>
+        <div class="metric-content">
+            <p class="metric-label">Totale Inkomsten</p>
+            <h3 class="metric-value">€@Model.TotalRevenue.ToString("F2")</h3>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-icon finance-icon-2">📈</div>
+        <div class="metric-content">
+            <p class="metric-label">Gemiddelde Bestelwaarde</p>
+            <h3 class="metric-value">€@Model.AverageOrderValue.ToString("F2")</h3>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-icon finance-icon-3">🎯</div>
+        <div class="metric-content">
+            <p class="metric-label">Winstmarge</p>
+            <h3 class="metric-value">@Model.ProfitMargin%</h3>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-icon finance-icon-4">⚠️</div>
+        <div class="metric-content">
+            <p class="metric-label">Openstaande Betalingen</p>
+            <h3 class="metric-value">€@Model.OutstandingPayments.ToString("F2")</h3>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-section">
+    <h2>Financieel Overzicht Deze Maand</h2>
+    <div class="financial-breakdown">
+        <div class="breakdown-item">
+            <span class="breakdown-label">Bruto Inkomsten:</span>
+            <span class="breakdown-value">€@Model.TotalRevenue.ToString("F2")</span>
+        </div>
+        <div class="breakdown-item">
+            <span class="breakdown-label">Kosten producten:</span>
+            <span class="breakdown-value negative">-€28,500.00</span>
+        </div>
+        <div class="breakdown-item">
+            <span class="breakdown-label">Verzendkosten:</span>
+            <span class="breakdown-value negative">-€2,100.00</span>
+        </div>
+        <div class="breakdown-item">
+            <span class="breakdown-label">Bedrijfskosten:</span>
+            <span class="breakdown-value negative">-€4,200.00</span>
+        </div>
+        <div class="breakdown-item breakdown-total">
+            <span class="breakdown-label">Netto Winst:</span>
+            <span class="breakdown-value">€10,430.50</span>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-section">
+    <div class="section-header">
+        <h2>Recente Transacties</h2>
+        <a asp-controller="Order" asp-action="Index" class="btn btn-sm btn-primary">Alle bestellingen</a>
+    </div>
+
+    <table class="table table-hover dashboard-table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Klant</th>
+                <th>Bedrag</th>
+                <th>Datum</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.RecentOrders != null && Model.RecentOrders.Any())
+            {
+                @foreach (var order in Model.RecentOrders)
+                {
+                    <tr>
+                        <td>#@order.Id</td>
+                        <td>@order.Customer?.Name</td>
+                        <td class="text-success">€@order.Products.Sum(p => p.Price).ToString("F2")</td>
+                        <td>@order.OrderDate.ToString("dd MMM yyyy")</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center text-muted">Geen bestellingen gevonden</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

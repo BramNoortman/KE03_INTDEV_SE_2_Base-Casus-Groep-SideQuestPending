@@ -2,8 +2,115 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<div class="alert-info">
-    <p class="p-1">
-WHASSUP BITCHES
-    </p>
+<div class="dashboard-header">
+    <h1>Dashboard</h1>
+    <p class="text-muted">Welkom terug! Hier is een overzicht van uw winkel.</p>
+</div>
+
+<!-- Key Metrics -->
+<div class="metrics-grid">
+    <div class="metric-card">
+        <div class="metric-icon sales-icon">📊</div>
+        <div class="metric-content">
+            <p class="metric-label">Totale Verkopen</p>
+            <h3 class="metric-value">€12,450</h3>
+            <p class="metric-change positive">↑ 12% deze maand</p>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-icon orders-icon">📦</div>
+        <div class="metric-content">
+            <p class="metric-label">Bestellingen</p>
+            <h3 class="metric-value">248</h3>
+            <p class="metric-change positive">↑ 8% deze maand</p>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-icon customers-icon">👥</div>
+        <div class="metric-content">
+            <p class="metric-label">Klanten</p>
+            <h3 class="metric-value">1,824</h3>
+            <p class="metric-change positive">↑ 5% deze maand</p>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-icon products-icon">🛍️</div>
+        <div class="metric-content">
+            <p class="metric-label">Producten</p>
+            <h3 class="metric-value">342</h3>
+            <p class="metric-change neutral">= geen verandering</p>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Orders Section -->
+<div class="dashboard-section">
+    <div class="section-header">
+        <h2>Recente Bestellingen</h2>
+        <a href="@Url.Action("Index", "Order")" class="btn btn-sm btn-primary">Alle bestellingen</a>
+    </div>
+    <table class="table table-hover dashboard-table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Klant</th>
+                <th>Bedrag</th>
+                <th>Status</th>
+                <th>Datum</th>
+                <th>Actie</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>#12345</td>
+                <td>Jan de Vries</td>
+                <td>€245.99</td>
+                <td><span class="badge bg-success">Verzonden</span></td>
+                <td>6 juni 2026</td>
+                <td><a href="#" class="btn btn-sm btn-outline-primary">Details</a></td>
+            </tr>
+            <tr>
+                <td>#12344</td>
+                <td>Maria García</td>
+                <td>€128.50</td>
+                <td><span class="badge bg-warning">In behandeling</span></td>
+                <td>5 juni 2026</td>
+                <td><a href="#" class="btn btn-sm btn-outline-primary">Details</a></td>
+            </tr>
+            <tr>
+                <td>#12343</td>
+                <td>Piet Jansen</td>
+                <td>€89.99</td>
+                <td><span class="badge bg-info">Verpakt</span></td>
+                <td>4 juni 2026</td>
+                <td><a href="#" class="btn btn-sm btn-outline-primary">Details</a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Quick Actions -->
+<div class="dashboard-section">
+    <h2>Snelle Acties</h2>
+    <div class="actions-grid">
+        <a href="@Url.Action("Create", "Products")" class="action-card">
+            <span class="action-icon">➕</span>
+            <span class="action-text">Nieuw Product</span>
+        </a>
+        <a href="@Url.Action("Index", "Customers")" class="action-card">
+            <span class="action-icon">📧</span>
+            <span class="action-text">Klanten Beheren</span>
+        </a>
+        <a href="@Url.Action("Index", "Products")" class="action-card">
+            <span class="action-icon">📋</span>
+            <span class="action-text">Voorraden Controleren</span>
+        </a>
+        <a href="#" class="action-card">
+            <span class="action-icon">⚙️</span>
+            <span class="action-text">Instellingen</span>
+        </a>
+    </div>
 </div>

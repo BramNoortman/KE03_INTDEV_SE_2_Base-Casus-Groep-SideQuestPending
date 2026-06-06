@@ -1,51 +1,54 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - KE03_INTDEV_SE_2_Base</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/KE03_INTDEV_SE_2_Base.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/KE03_INTDEV_SE_2_Base.styles.css" asp-append-version="true"/>
 </head>
 <body>
-    <div class="admin-layout">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h3>Admin Panel</h3>
-            </div>
+<div class="admin-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>Admin Panel</h3>
+        </div>
 
-            <nav class="sidebar-nav">
-                <a asp-controller="Home" asp-action="Index">
-                    Dashboard
-                </a>
-                <a asp-controller="Order" asp-action="Index">
-                    Orders
-                </a>
-                <a asp-controller="Products" asp-action="Index">
-                    Producten
-                </a>
-                <a asp-controller="Customers" asp-action="Index">
-                    Klanten
-                </a>
-                <a asp-controller="Settings" asp-action="Index">
-                    Instellingen
-                </a>
-                <a asp-controller="account" asp-action="Logout"
-                class="logout-link">
-                    Uitloggen
-                </a>
-            </nav>
-        </aside>
+        <nav class="sidebar-nav">
+            <a asp-controller="Home" asp-action="Index">
+                Dashboard
+            </a>
+            <a asp-controller="Order" asp-action="Index">
+                Orders
+            </a>
+            <a asp-controller="Finance" asp-action="Index">
+                Financiën
+            </a>
+            <a asp-controller="Products" asp-action="Index">
+                Producten
+            </a>
+            <a asp-controller="Customers" asp-action="Index">
+                Klanten
+            </a>
+            <a asp-controller="Settings" asp-action="Index">
+                Instellingen
+            </a>
+            <a asp-controller="account" asp-action="Logout"
+               class="logout-link">
+                Uitloggen
+            </a>
+        </nav>
+    </aside>
 
-        <main class="main-content">
-            @RenderBody()
-        </main>
-    </div>
+    <main class="main-content">
+        @RenderBody()
+    </main>
+</div>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
