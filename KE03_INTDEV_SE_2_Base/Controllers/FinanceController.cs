@@ -20,8 +20,8 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
             var viewModel = new FinanceViewModel
             {
                 RecentOrders = orders.OrderByDescending(o => o.OrderDate).Take(10).ToList(),
-                TotalRevenue = orders.Sum(o => o.Products.Sum(p => p.Price)),
-                AverageOrderValue = orders.Any() ? orders.Average(o => o.Products.Sum(p => p.Price)) : 0,
+                TotalRevenue = orders.Sum(o => o.Items.Sum(p => p.Product.Price)),
+                AverageOrderValue = orders.Any() ? orders.Average(o => o.Items.Sum(p => p.Product.Price)) : 0,
                 ProfitMargin = 32,
                 OutstandingPayments = 3450
             };

@@ -92,7 +92,7 @@
                     <tr>
                         <td>#@order.Id</td>
                         <td>@order.Customer?.Name</td>
-                        <td class="text-success">€@order.Products.Sum(p => p.Price).ToString("F2")</td>
+                        <td class="text-success">€@order.Items.Sum(p => p.Product.Price).ToString("F2")</td>
                         <td>@order.OrderDate.ToString("dd MMM yyyy")</td>
                     </tr>
                 }
