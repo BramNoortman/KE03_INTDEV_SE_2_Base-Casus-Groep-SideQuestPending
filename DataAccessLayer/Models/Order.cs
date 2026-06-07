@@ -9,14 +9,19 @@ namespace DataAccessLayer.Models
 {
     public class Order
     {
+        [Key]
+        [Required]
         public int Id { get; set; }
 
+        [Required]
         public DateTime OrderDate { get; set; }
 
+        [Required]
         public int CustomerId { get; set; }
-        
-        public Customer Customer { get; set; } = null!;
 
-        public ICollection<Product> Products { get; } = new List<Product>();
+        public Customer? Customer { get; set; }
+
+        // replace many-to-many with explicit join OrderItem to store quantity
+        public ICollection<OrderItem> Items { get; } = new List<OrderItem>();
     }
 }
