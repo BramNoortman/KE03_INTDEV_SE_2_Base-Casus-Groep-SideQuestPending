@@ -20,8 +20,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Views\LogOut\" />
     <Folder Include="wwwroot\Media\" />
     <Folder Include="wwwroot\MediaFunctional\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Views\WorkInProgress\Create.cshtml" />
+    <AdditionalFiles Include="Views\WorkInProgress\Delete.cshtml" />
+    <AdditionalFiles Include="Views\WorkInProgress\Details.cshtml" />
+    <AdditionalFiles Include="Views\WorkInProgress\Edit.cshtml" />
+    <AdditionalFiles Include="Views\WorkInProgress\Index.cshtml" />
   </ItemGroup>
 
 </Project>
