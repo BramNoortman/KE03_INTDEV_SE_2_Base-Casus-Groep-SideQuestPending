@@ -1,0 +1,49 @@
+@model DataAccessLayer.Models.Driver
+
+@{
+    ViewData["Title"] = "Bezorger aanmaken";
+}
+
+<div class="driver-form">
+    <h1>Nieuwe bezorger aanmaken</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Naam</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="BusNumber" class="form-label">Bus nummer</label>
+                    <input asp-for="BusNumber" class="form-control" />
+                    <span asp-validation-for="BusNumber" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="RouteNumber" class="form-label">Route nummer</label>
+                    <input asp-for="RouteNumber" class="form-control" />
+                    <span asp-validation-for="RouteNumber" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input asp-for="Active" type="checkbox" class="form-check-input" />
+                    <label asp-for="Active" class="form-check-label">Actief</label>
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Aanmaken</button>
+                    <a asp-action="Index" class="btn btn-secondary">Annuleren</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

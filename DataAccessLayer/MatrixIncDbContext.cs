@@ -14,20 +14,23 @@ namespace DataAccessLayer
         public DbSet<Product> Products { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Part> Parts { get; set; }
+        public DbSet<Driver> Drivers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Customer → Orders (1:n, required)
             modelBuilder.Entity<Customer>()
                 .HasMany(c => c.Orders)
                 .WithOne(o => o.Customer)
                 .HasForeignKey(o => o.CustomerId).IsRequired();
 
-            //modelBuilder.Entity<Order>()
-            //    .HasOne(o => o.Customer)
-            //    .WithMany(c => c.Orders)
-            //    .OnDelete(DeleteBehavior.Restrict);
+            // Driver → Orders (1:n, optional - order may not have assigned driver)
+            modelBuilder.Entity<Driver>()
+                .HasMany(d => d.Orders)
+                .WithOne(o => o.Driver)
+                .HasForeignKey(o => o.DriverId);
 
-            // product-order relationship via OrderItem (allows quantity)
+            // Order items: composite key (OrderId + ProductId) to allow multiple products per order
             modelBuilder.Entity<OrderItem>()
                 .HasKey(oi => new { oi.OrderId, oi.ProductId });
 
@@ -41,6 +44,7 @@ namespace DataAccessLayer
                 .WithMany(p => p.Orders)
                 .HasForeignKey(oi => oi.ProductId);
 
+            // Part ↔ Product (m:n relationship)
             modelBuilder.Entity<Part>()
                 .HasMany(p => p.Products)
                 .WithMany(p => p.Parts);

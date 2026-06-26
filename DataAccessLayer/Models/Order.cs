@@ -21,7 +21,18 @@ namespace DataAccessLayer.Models
 
         public Customer? Customer { get; set; }
 
-        // replace many-to-many with explicit join OrderItem to store quantity
+        public int? DriverId { get; set; }
+
+        // Navigation property for assigned driver (nullable - order may not have driver yet)
+        public Driver? Driver { get; set; }
+
+        // Delivery status: NogNietVerzonden (0), Onderweg (1), Bezorgd (2)
+        public OrderStatus Status { get; set; } = OrderStatus.NogNietVerzonden;
+
+        // Warehouse rack location: A, B, C, or D
+        public char? Rack { get; set; }
+
+        // Order items with quantity (many-to-many through OrderItem join table)
         public ICollection<OrderItem> Items { get; } = new List<OrderItem>();
     }
 }

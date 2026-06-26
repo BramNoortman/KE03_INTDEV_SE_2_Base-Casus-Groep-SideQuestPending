@@ -1,0 +1,78 @@
+@model DataAccessLayer.Models.Driver
+
+@{
+    ViewData["Title"] = "Bezorger Details";
+}
+
+<div class="driver-details">
+    <h1>@Model.Name</h1>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Bezorger ID:</strong> @Model.Id
+                </div>
+                <div class="col-md-6">
+                    <strong>Bus nummer:</strong> @Model.BusNumber
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Route nummer:</strong> @Model.RouteNumber
+                </div>
+                <div class="col-md-6">
+                    <strong>Actief:</strong> @(Model.Active ? "Ja" : "Nee")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2>Pakketjes in bus @Model.BusNumber</h2>
+    
+    @if (Model.Orders != null && Model.Orders.Count > 0)
+    {
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <table class="table table-striped mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Klant</th>
+                            <th>Adres</th>
+                            <th>Order Datum</th>
+                            <th>Acties</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.Orders)
+                        {
+                            <tr>
+                                <td>@order.Id</td>
+                                <td>@order.Customer?.Name</td>
+                                <td>@order.Customer?.Address</td>
+                                <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    <a asp-controller="Order" asp-action="Details" asp-route-id="@order.Id" class="btn btn-primary btn-sm">
+                                        Details
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            Geen pakketjes in deze bus
+        </div>
+    }
+
+    <div class="mt-4">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Bewerken</a>
+        <a asp-action="Index" class="btn btn-secondary">Terug naar overzicht</a>
+    </div>
+</div>

@@ -26,10 +26,11 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
         {
             var query = _context.Orders.Include(o => o.Customer).AsQueryable();
 
+            // Search across ID, date, customer, and status fields
             if (!string.IsNullOrWhiteSpace(search))
             {
                 search = search.Trim().ToLower();
-                query = query.Where(o => o.Id.ToString().Contains(search) || o.OrderDate.ToString().Contains(search) || o.CustomerId.ToString().Contains(search) || (o.Customer.Name ?? "").ToLower().Contains(search));
+                query = query.Where(o => o.Id.ToString().Contains(search) || o.OrderDate.ToString().Contains(search) || o.CustomerId.ToString().Contains(search) || (o.Customer.Name ?? "").ToLower().Contains(search) || o.Status.ToString().ToLower().Contains(search));
             }
 
             ViewBag.Search = search;
@@ -67,6 +68,23 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
             var products = await _context.Products.ToListAsync();
             _logger.LogInformation("Create GET - products count={Count}", products?.Count ?? 0);
             ViewData["ProductListItems"] = products;
+            
+            // Status dropdown with Dutch labels (NogNietVerzonden=0, Onderweg=1, Bezorgd=2)
+            var statusItems = new[] {
+                new { Value = (int)OrderStatus.NogNietVerzonden, Text = "Nog niet verzonden" },
+                new { Value = (int)OrderStatus.Onderweg, Text = "Onderweg" },
+                new { Value = (int)OrderStatus.Bezorgd, Text = "Bezorgd" }
+            };
+            ViewData["StatusList"] = new SelectList(statusItems, "Value", "Text");
+            
+            // Rack assignment dropdown (A, B, C, D)
+            var rackItems = new[] {
+                new { Value = 'A', Text = "Rek A" },
+                new { Value = 'B', Text = "Rek B" },
+                new { Value = 'C', Text = "Rek C" },
+                new { Value = 'D', Text = "Rek D" }
+            };
+            ViewData["RackList"] = new SelectList(rackItems, "Value", "Text");
             return View();
         }
 
@@ -75,7 +93,7 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("OrderDate,CustomerId")] Order order)
+        public async Task<IActionResult> Create([Bind("OrderDate,CustomerId,Status,Rack")] Order order)
         {
             _logger.LogInformation("Create POST received. Form values: {Form}", Request.Form.ToDictionary(k => k.Key, v => v.Value.ToString()));
             _logger.LogInformation("Bound Order: {@Order}", order);
@@ -88,10 +106,24 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
                 ViewData["CustomerList"] = new SelectList(customers, "Id", "Name", order.CustomerId);
                 var products = await _context.Products.ToListAsync();
                 ViewData["ProductListItems"] = products;
+                var statusItems = new[] {
+                    new { Value = (int)OrderStatus.NogNietVerzonden, Text = "Nog niet verzonden" },
+                    new { Value = (int)OrderStatus.Onderweg, Text = "Onderweg" },
+                    new { Value = (int)OrderStatus.Bezorgd, Text = "Bezorgd" }
+                };
+                ViewData["StatusList"] = new SelectList(statusItems, "Value", "Text", (int)order.Status);
+                var rackItems = new[] {
+                    new { Value = 'A', Text = "Rek A" },
+                    new { Value = 'B', Text = "Rek B" },
+                    new { Value = 'C', Text = "Rek C" },
+                    new { Value = 'D', Text = "Rek D" }
+                };
+                ViewData["RackList"] = new SelectList(rackItems, "Value", "Text", order.Rack);
                 return View(order);
             }
 
-            // read quantities for all products and add items with qty>0
+            // Read quantities from form fields (format: quantity_{productId}) and create OrderItems
+            // Only adds items with qty > 0 to avoid empty order lines
             var allProducts = await _context.Products.Select(p => p.Id).ToListAsync();
             foreach (var pid in allProducts)
             {
@@ -128,6 +160,19 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
             ViewData["CustomerList"] = new SelectList(customers, "Id", "Name", order.CustomerId);
             var products = await _context.Products.ToListAsync();
             ViewData["ProductListItems"] = products;
+            var statusItems = new[] {
+                new { Value = (int)OrderStatus.NogNietVerzonden, Text = "Nog niet verzonden" },
+                new { Value = (int)OrderStatus.Onderweg, Text = "Onderweg" },
+                new { Value = (int)OrderStatus.Bezorgd, Text = "Bezorgd" }
+            };
+            ViewData["StatusList"] = new SelectList(statusItems, "Value", "Text", (int)order.Status);
+            var rackItems = new[] {
+                new { Value = 'A', Text = "Rek A" },
+                new { Value = 'B', Text = "Rek B" },
+                new { Value = 'C', Text = "Rek C" },
+                new { Value = 'D', Text = "Rek D" }
+            };
+            ViewData["RackList"] = new SelectList(rackItems, "Value", "Text", order.Rack);
             return View(order);
         }
 
@@ -136,7 +181,7 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,OrderDate,CustomerId")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,OrderDate,CustomerId,Status,Rack")] Order order)
         {
             if (id != order.Id)
             {
@@ -161,6 +206,8 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
                     // update scalar
                     existingOrder.OrderDate = order.OrderDate;
                     existingOrder.CustomerId = order.CustomerId;
+                    existingOrder.Status = order.Status;
+                    existingOrder.Rack = order.Rack;
 
                     // read quantities for all products and replace items accordingly
                     var allProducts = await _context.Products.Select(p => p.Id).ToListAsync();
@@ -201,6 +248,19 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
             _logger.LogWarning("ModelState invalid on Edit: {Errors}", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
             var customers2 = await _context.Customers.ToListAsync();
             ViewData["CustomerList"] = new SelectList(customers2, "Id", "Name", order.CustomerId);
+            var statusItems = new[] {
+                new { Value = (int)OrderStatus.NogNietVerzonden, Text = "Nog niet verzonden" },
+                new { Value = (int)OrderStatus.InDeBus, Text = "Onderweg" },
+                new { Value = (int)OrderStatus.Onderweg, Text = "Bezorgd" }
+            };
+            ViewData["StatusList"] = new SelectList(statusItems, "Value", "Text", (int)order.Status);
+            var rackItems = new[] {
+                new { Value = 'A', Text = "Rek A" },
+                new { Value = 'B', Text = "Rek B" },
+                new { Value = 'C', Text = "Rek C" },
+                new { Value = 'D', Text = "Rek D" }
+            };
+            ViewData["RackList"] = new SelectList(rackItems, "Value", "Text", order.Rack);
             return View(order);
         }
 

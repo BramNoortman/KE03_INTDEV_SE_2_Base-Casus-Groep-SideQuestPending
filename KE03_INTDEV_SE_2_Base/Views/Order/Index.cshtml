@@ -23,6 +23,7 @@
                         <th>Order Datum</th>
                         <th>Klant ID</th>
                         <th>Klant naam</th>
+                        <th>Status</th>
                         <th class="text-end">
                             Acties
                         </th>
@@ -37,6 +38,7 @@
                             <td>@order.OrderDate</td>
                             <td>@order.CustomerId</td>
                             <td>@order.Customer.Name</td>
+                            <td>@order.Status</td>
 
                             <td class="text-end">
                                 <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-primary me-2">

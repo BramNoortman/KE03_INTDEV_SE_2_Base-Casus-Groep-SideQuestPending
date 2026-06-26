@@ -1,0 +1,134 @@
+@model IEnumerable<DataAccessLayer.Models.Driver>
+
+@{
+    ViewData["Title"] = "Bezorgeroverzicht";
+}
+<div class="drivers-page">
+    <h1 class="mb-4">
+        Bezorgers
+    </h1>
+
+    @*Display searchbar *@
+    <div class="d-flex justify-content-between align-items-center products-toolbar">
+        <form method="get" class="products-toolbar">
+            <div class="position-relative">
+                <input type="text" name="search" value="@ViewBag.Search" class="form-control search-bar" placeholder="zoek naar bezorger" />
+                <a asp-action="Index" class="btn btn-sm btn-light position-absolute top-50 end-0 translate-middle-y me-1">✕</a> @*clear searchbar*@
+            </div>
+            <button type="submit" class="btn btn-secondary">Bezorger zoeken</button>
+        </form>
+
+        @* make driver*@
+        <a asp-action="Create" class="btn btn-primary">Bezorger aanmaken</a>
+    </div>
+
+    @*Display list of drivers by id, name, bus number, route number, active status*@
+    <div class="card shadow-sm mt-4">
+        <div class="card-body p-0">
+            <table class="table table-striped mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>
+                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.IdSort" class="text-white text-decoration-none">
+                                Bezorger ID
+                                @if (string.IsNullOrEmpty(ViewBag.CurrentSort))
+                                {
+                                    <span>▼</span>
+                                }
+                                else if (ViewBag.CurrentSort == "id_desc")
+                                {          
+                                    <span>▲</span>
+                                }
+                            </a>
+                        </th>
+                        <th>
+                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.NameSort" class="text-white text-decoration-none">
+                                Naam
+                                @if (ViewBag.CurrentSort == "name")
+                                {
+                                    <span>▲</span>
+                                }
+                                else if (ViewBag.CurrentSort == "name_desc")
+                                {
+                                    <span>▼</span>
+                                }
+                            </a>
+                        </th>
+                        <th>
+                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.BusNumberSort" class="text-white text-decoration-none">
+                                Bus nummer
+                                @if (ViewBag.CurrentSort == "busnumber")
+                                {
+                                    <span>▼</span>
+                                }
+                                else if (ViewBag.CurrentSort == "busnumber_desc")
+                                {
+                                    <span>▲</span>
+                                }
+                            </a>
+                        </th>
+                        <th>
+                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.RouteNumberSort" class="text-white text-decoration-none">
+                                Route nummer
+                                @if (ViewBag.CurrentSort == "routenumber")
+                                {
+                                    <span>▼</span>
+                                }
+                                else if (ViewBag.CurrentSort == "routenumber_desc")
+                                {
+                                    <span>▲</span>
+                                }
+                            </a>
+                        </th>
+                        <th>
+                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.ActiveSort" class="text-white text-decoration-none">
+                                Actief
+                                @if (ViewBag.CurrentSort == "active")
+                                {
+                                    <span>▲</span>
+                                }
+                                else if (ViewBag.CurrentSort == "active_desc")
+                                {
+                                    <span>▼</span>
+                                }
+                            </a>
+                        </th>
+                        <th class="text-end">
+                            Acties
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var driver in Model)
+                    {
+                        <tr>
+                            <td>@driver.Id</td>
+                            <td>@driver.Name</td>
+                            <td>@driver.BusNumber</td>
+                            <td>@driver.RouteNumber</td>
+                            <td>@driver.Active</td>
+
+                            <td class="text-end">
+                                <a asp-action="Details" asp-route-id="@driver.Id" class="btn btn-primary">
+                                    Details
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@driver.Id" class="btn btn-warning">
+                                    Bewerken
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@driver.Id" class="btn btn-danger">
+                                    Verwijderen
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

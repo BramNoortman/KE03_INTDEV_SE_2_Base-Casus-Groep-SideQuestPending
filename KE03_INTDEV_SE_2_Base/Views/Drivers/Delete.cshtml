@@ -1,0 +1,39 @@
+@model DataAccessLayer.Models.Driver
+
+@{
+    ViewData["Title"] = "Bezorger verwijderen";
+}
+
+<div class="driver-delete">
+    <h1>Bezorger verwijderen</h1>
+    <h3 class="text-danger">Weet je zeker dat je @Model.Name wilt verwijderen?</h3>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Bezorger ID:</strong> @Model.Id
+                </div>
+                <div class="col-md-6">
+                    <strong>Naam:</strong> @Model.Name
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Bus nummer:</strong> @Model.BusNumber
+                </div>
+                <div class="col-md-6">
+                    <strong>Route nummer:</strong> @Model.RouteNumber
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <form asp-action="DeleteConfirmed" method="post" style="display:inline;">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger">Ja, verwijderen</button>
+        </form>
+        <a asp-action="Index" class="btn btn-secondary">Annuleren</a>
+    </div>
+</div>

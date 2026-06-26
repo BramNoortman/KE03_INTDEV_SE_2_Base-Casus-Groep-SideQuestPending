@@ -26,6 +26,14 @@
                 <select asp-for="CustomerId" asp-items="@(ViewData["CustomerList"] as SelectList ?? new SelectList(Enumerable.Empty<SelectListItem>()))" class="form-control"></select>
                 <span asp-validation-for="CustomerId" class="text-danger"></span>
             </div>
+            <div class="form-group mb-3">
+                <label asp-for="Status" class="control-label">Status</label>
+                <select asp-for="Status" asp-items="@(ViewData["StatusList"] as SelectList)" class="form-control"></select>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Rack" class="control-label">Rek</label>
+                <select asp-for="Rack" asp-items="@(ViewData["RackList"] as SelectList)" class="form-control"></select>
+            </div>
             <div class="form-group">
                 @{
                     var productList = ViewData["ProductListItems"] as IEnumerable<DataAccessLayer.Models.Product> ?? Enumerable.Empty<DataAccessLayer.Models.Product>();
