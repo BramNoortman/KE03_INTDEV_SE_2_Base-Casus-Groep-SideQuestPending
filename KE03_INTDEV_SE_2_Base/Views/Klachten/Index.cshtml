@@ -1,0 +1,145 @@
+@model IEnumerable<DataAccessLayer.Models.Klacht>
+
+@{
+    ViewData["Title"] = "Klachtenoverzicht";
+}
+
+<div class="klachten-page">
+    <h1 class="mb-4">Klachten</h1>
+
+    @* Search + Create *@
+    <div class="d-flex justify-content-between align-items-center products-toolbar">
+        <form method="get" class="products-toolbar">
+            <div class="position-relative">
+                <input type="text"
+                       name="search"
+                       value="@ViewBag.Search"
+                       class="form-control search-bar"
+                       placeholder="zoek naar klacht" />
+
+                <a asp-action="Index"
+                   class="btn btn-sm btn-light position-absolute top-50 end-0 translate-middle-y me-1">
+                    ✕
+                </a>
+            </div>
+
+            <button type="submit" class="btn btn-secondary">
+                Zoek klacht
+            </button>
+        </form>
+
+        <a asp-action="Create" class="btn btn-primary">
+            Klacht aanmaken
+        </a>
+    </div>
+
+    @* Table *@
+    <div class="card shadow-sm mt-4">
+        <div class="card-body p-0">
+            <table class="table table-striped mb-0">
+                <thead class="table-dark">
+                    <tr>
+
+                        <th>
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.IdSort"
+                               class="text-white text-decoration-none">
+                                ID
+
+                                @if (ViewBag.CurrentSort == "id")
+                                {
+                                    <span>▲</span>
+                                }
+                                else if (ViewBag.CurrentSort == "id_desc")
+                                {
+                                    <span>▼</span>
+                                }
+                            </a>
+                        </th>
+
+                        <th>
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.OnderwerpSort"
+                               class="text-white text-decoration-none">
+                                Onderwerp
+
+                                @if (ViewBag.CurrentSort == "onderwerp")
+                                {
+                                    <span>▲</span>
+                                }
+                                else if (ViewBag.CurrentSort == "onderwerp_desc")
+                                {
+                                    <span>▼</span>
+                                }
+                            </a>
+                        </th>
+
+                        <th>
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.StatusSort"
+                               class="text-white text-decoration-none">
+                                Status
+
+                                @if (ViewBag.CurrentSort == "status")
+                                {
+                                    <span>▲</span>
+                                }
+                                else if (ViewBag.CurrentSort == "status_desc")
+                                {
+                                    <span>▼</span>
+                                }
+                            </a>
+                        </th>
+
+                        <th>
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.DateSort"
+                               class="text-white text-decoration-none">
+                                Datum
+
+                                @if (ViewBag.CurrentSort == "date")
+                                {
+                                    <span>▲</span>
+                                }
+                                else if (ViewBag.CurrentSort == "date_desc")
+                                {
+                                    <span>▼</span>
+                                }
+                            </a>
+                        </th>
+
+                        <th class="text-end">Acties</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var klacht in Model)
+                    {
+                        <tr>
+                            <td>@klacht.Id</td>
+                            <td>@klacht.Onderwerp</td>
+                            <td>@klacht.Status</td>
+                            <td>@klacht.AangemaaktOp.ToString("yyyy-MM-dd")</td>
+
+                            <td class="text-end">
+                                <a asp-action="Details" asp-route-id="@klacht.Id" class="btn btn-primary btn-sm">
+                                    Details
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@klacht.Id" class="btn btn-warning btn-sm">
+                                    Bewerken
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@klacht.Id" class="btn btn-danger btn-sm">
+                                    Verwijderen
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

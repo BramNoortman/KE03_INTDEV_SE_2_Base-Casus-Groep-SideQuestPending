@@ -32,4 +32,12 @@
     <AdditionalFiles Include="Views\WorkInProgress\Index.cshtml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Klachten\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Klachten\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Klachten\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Klachten\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Klachten\Index.cshtml" />
+  </ItemGroup>
+
 </Project>

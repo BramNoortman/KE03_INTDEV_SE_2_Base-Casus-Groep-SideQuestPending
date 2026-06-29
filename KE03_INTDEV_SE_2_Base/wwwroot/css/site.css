@@ -171,6 +171,16 @@ body {
     color: #6b7280;
 }
 
+.metric-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.metric-card-link:hover {
+    cursor: pointer;
+}
+
 /* Dashboard Sections */
 .dashboard-section {
     background: white;

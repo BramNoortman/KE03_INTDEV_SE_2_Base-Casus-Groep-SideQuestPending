@@ -1,0 +1,56 @@
+@model DataAccessLayer.Models.Klacht
+
+@{
+    ViewData["Title"] = "Klacht verwijderen";
+}
+
+<div class="driver-delete">
+    <h1>Klacht verwijderen</h1>
+    <h3 class="text-danger">
+        Weet je zeker dat je de klacht "@Model.Onderwerp" wilt verwijderen?
+    </h3>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Klacht ID:</strong> @Model.Id
+                </div>
+                <div class="col-md-6">
+                    <strong>Status:</strong> @Model.Status
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <strong>Onderwerp:</strong> @Model.Onderwerp
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <strong>Beschrijving:</strong> @Model.Beschrijving
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Aangemaakt op:</strong> @Model.AangemaaktOp
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <form asp-action="Delete" method="post" style="display:inline;">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger">
+                Ja, verwijderen
+            </button>
+        </form>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            Annuleren
+        </a>
+    </div>
+</div>

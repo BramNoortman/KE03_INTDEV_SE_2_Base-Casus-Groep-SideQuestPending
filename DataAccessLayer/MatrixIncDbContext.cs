@@ -15,7 +15,7 @@ namespace DataAccessLayer
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Part> Parts { get; set; }
         public DbSet<Driver> Drivers { get; set; }
-
+        public DbSet<Klacht> Klachten { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Customer → Orders (1:n, required)

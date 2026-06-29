@@ -1,0 +1,49 @@
+@model DataAccessLayer.Models.Klacht
+
+@{
+    ViewData["Title"] = "Klacht Details";
+}
+
+<div class="driver-details">
+    <h1>@Model.Onderwerp</h1>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Klacht ID:</strong> @Model.Id
+                </div>
+                <div class="col-md-6">
+                    <strong>Status:</strong> @Model.Status
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Aangemaakt op:</strong> @Model.AangemaaktOp.ToString("yyyy-MM-dd HH:mm")
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <strong>Beschrijving:</strong>
+                    <p class="mt-2">@Model.Beschrijving</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+            Bewerken
+        </a>
+
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+            Verwijderen
+        </a>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            Terug naar overzicht
+        </a>
+    </div>
+</div>

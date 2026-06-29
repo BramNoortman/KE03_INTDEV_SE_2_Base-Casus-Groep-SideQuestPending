@@ -1,0 +1,51 @@
+@model DataAccessLayer.Models.Klacht
+
+@{
+    ViewData["Title"] = "Klacht bewerken";
+}
+
+<div class="driver-form">
+    <h1>Klacht bewerken</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label asp-for="Onderwerp" class="form-label">Onderwerp</label>
+                    <input asp-for="Onderwerp" class="form-control" />
+                    <span asp-validation-for="Onderwerp" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Beschrijving" class="form-label">Beschrijving</label>
+                    <textarea asp-for="Beschrijving" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Beschrijving" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Status" class="form-label">Status</label>
+                    <input asp-for="Status" class="form-control" />
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AangemaaktOp" class="form-label">Aangemaakt op</label>
+                    <input asp-for="AangemaaktOp" class="form-control" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Opslaan</button>
+                    <a asp-action="Index" class="btn btn-secondary">Annuleren</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
