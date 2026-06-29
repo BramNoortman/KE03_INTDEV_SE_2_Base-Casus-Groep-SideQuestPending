@@ -38,6 +38,7 @@
                             <thead>
                                 <tr>
                                     <th>Pakket ID</th>
+                                    <th>Volledig Ingepakt</th>
                                     <th>Klantnaam</th>
                                     <th>Afleveradres</th>
                                     <th>Bus</th>
@@ -49,6 +50,7 @@
                                 {
                                     <tr>
                                         <td>@order.Id</td>
+                                        <td>@order.OrderPackaged</td>
                                         <td>@order.Customer?.Name</td>
                                         <td>@order.Customer?.Address</td>
                                         <td>@(order.Driver?.BusNumber ?? "Niet toegewezen")</td>

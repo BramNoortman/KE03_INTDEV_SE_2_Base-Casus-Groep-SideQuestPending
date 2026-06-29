@@ -13,6 +13,9 @@ namespace DataAccessLayer.Models
         public int ProductId { get; set; }
 
         public Product? Product { get; set; }
+        
+        // Packaging status: Unacked, Packed
+        public bool Packed { get; set; } = false;
 
         [Required]
         public int Quantity { get; set; }

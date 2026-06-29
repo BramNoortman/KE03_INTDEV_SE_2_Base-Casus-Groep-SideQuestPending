@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\LogOut\" />
     <Folder Include="wwwroot\Media\" />
     <Folder Include="wwwroot\MediaFunctional\" />
   </ItemGroup>

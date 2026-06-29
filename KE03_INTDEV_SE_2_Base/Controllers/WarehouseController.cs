@@ -24,6 +24,7 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
             var orders = await _context.Orders
                 .Include(o => o.Customer)
                 .Include(o => o.Driver)
+                .Include(o => o.Items)
                 .OrderBy(o => o.Rack)
                 .ThenBy(o => o.Id)
                 .ToListAsync();

@@ -208,16 +208,18 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
                     existingOrder.CustomerId = order.CustomerId;
                     existingOrder.Status = order.Status;
                     existingOrder.Rack = order.Rack;
+                    
 
                     // read quantities for all products and replace items accordingly
                     var allProducts = await _context.Products.Select(p => p.Id).ToListAsync();
                     var newItems = new List<OrderItem>();
                     foreach (var pid in allProducts)
                     {
+                        var packed = Request.Form[$"packed_{pid}"] == "true";
                         var qtyStr = Request.Form[$"quantity_{pid}"] .FirstOrDefault();
                         if (int.TryParse(qtyStr, out var qty) && qty > 0)
                         {
-                            newItems.Add(new OrderItem { ProductId = pid, Quantity = qty });
+                            newItems.Add(new OrderItem { ProductId = pid, Quantity = qty, Packed = packed });
                         }
                     }
 

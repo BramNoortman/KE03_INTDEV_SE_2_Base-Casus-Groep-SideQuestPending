@@ -34,5 +34,8 @@ namespace DataAccessLayer.Models
 
         // Order items with quantity (many-to-many through OrderItem join table)
         public ICollection<OrderItem> Items { get; } = new List<OrderItem>();
+        
+        public bool OrderPackaged => Items.Any() && Items.All(i => i.Packed);
+        
     }
 }
