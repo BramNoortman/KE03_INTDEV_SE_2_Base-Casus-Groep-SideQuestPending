@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Producten overview";
+
+    var sortField = ViewBag.SortField as string;
+    var direction = ViewBag.Direction as string;
 }
 
 <div class="products-page">
@@ -10,18 +13,44 @@
     </h1>
 
     @*Display searchbar *@
-    <div class="d-flex justify-content-between align-items-center products-toolbar">
-        <form method="get" class="products-toolbar">
-            <div class="position-relative">
-                <input type="text" name="search" value="@ViewBag.Search" class="form-control search-bar" placeholder="zoek product" />
-                    <a asp-action="Index" class="btn btn-sm btn-light position-absolute top-50 end-0 translate-middle-y me-1">✕</a> @*clear searchbar*@
-            </div> 
-            <button type="submit" class="btn btn-secondary">Product zoeken</button>
-        </form>
+    <form method="get">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center gap-2">
+                <div class="position-relative">
+                    <input type="text"
+                           name="search"
+                           value="@ViewBag.Search"
+                           class="form-control search-bar"
+                           placeholder="Zoek product" />
 
-        @*Make product*@
-        <a asp-action="Create" class="btn btn-primary">Product aanmaken</a>
-    </div>
+                    <a asp-action="Index"
+                       class="btn btn-sm btn-light position-absolute top-50 end-0 translate-middle-y me-1">
+                        ✕
+                    </a>
+                </div>
+
+                <label class="mb-0">Sorteer op:</label>
+                <select name="sortField" class="form-select w-auto">
+                    <option value="id" selected="@(sortField == "id")">ID</option>
+                    <option value="name" selected="@(sortField == "name")">Productnaam</option>
+                    <option value="price" selected="@(sortField == "price")">Productprijs</option>
+                    <option value="description" selected="@(sortField == "description")">Omschrijving</option>
+                </select>
+                <select name="direction" class="form-select w-auto">
+                    <option value="asc" selected="@(direction == "asc")">Oplopend</option>
+                    <option value="desc" selected="@(direction == "desc")">Aflopend</option>
+                </select>
+                <button type="submit" class="btn btn-secondary">
+                    Zoek en filter
+                </button>
+            </div>
+
+            @*Make product*@
+            <a asp-action="Create" class="btn btn-primary">
+                Product aanmaken
+            </a>
+        </div>
+    </form>
 
     @* Show list of products by id, name, price, etc*@
     <div class="card shadow-sm mt-4">
@@ -30,9 +59,12 @@
                 <thead class="table-dark">
                     <tr>
                         <th>
-                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
-                               asp-route-sortOrder="@ViewBag.IdSort" class="text-white text-decoration-none">
-                                ID
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.IdSort"
+                               class="d-inline-flex align-items-center gap-1 text-white text-decoration-none text-nowrap">
+                                <span>ID</span>
+
                                 @if (string.IsNullOrEmpty(ViewBag.CurrentSort))
                                 {
                                     <span>▼</span>
@@ -44,9 +76,12 @@
                             </a>
                         </th>
                         <th>
-                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
-                               asp-route-sortOrder="@ViewBag.NameSort" class="text-white text-decoration-none">
-                                Productnaam
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.NameSort"
+                               class="d-inline-flex align-items-center gap-1 text-white text-decoration-none text-nowrap">
+                                <span>Productnaam</span>
+
                                 @if (ViewBag.CurrentSort == "name")
                                 {
                                     <span>▲</span>
@@ -58,9 +93,12 @@
                             </a>
                         </th>
                         <th>
-                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
-                               asp-route-sortOrder="@ViewBag.PriceSort" class="text-white text-decoration-none">
-                                Productprijs
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.PriceSort"
+                               class="d-inline-flex align-items-center gap-1 text-white text-decoration-none text-nowrap">
+                                <span>Productprijs</span>
+
                                 @if (ViewBag.CurrentSort == "price")
                                 {
                                     <span>▼</span>
@@ -72,9 +110,12 @@
                             </a>
                         </th>
                         <th>
-                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
-                               asp-route-sortOrder="@ViewBag.DescriptionSort" class="text-white text-decoration-none">
-                                Omschrijving
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.DescriptionSort"
+                               class="d-inline-flex align-items-center gap-1 text-white text-decoration-none text-nowrap">
+                                <span>Omschrijving</span>
+
                                 @if (ViewBag.CurrentSort == "description")
                                 {
                                     <span>▲</span>

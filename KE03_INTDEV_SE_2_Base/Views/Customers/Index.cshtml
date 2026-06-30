@@ -2,25 +2,56 @@
 
 @{
     ViewData["Title"] = "Klanten overview";
+
+    var sortField = ViewBag.SortField as string;
+    var direction = ViewBag.Direction as string;
 }
+
 <div class="customers-page">
     <h1 class="mb-4">
         Klanten
     </h1>
 
-@*Display searchbar *@
-    <div class="d-flex justify-content-between align-items-center products-toolbar">
-        <form method="get" class="products-toolbar">
-            <div class="position-relative">
-                <input type="text" name="search" value="@ViewBag.Search" class="form-control search-bar" placeholder="zoek naar klant" />
-                <a asp-action="Index" class="btn btn-sm btn-light position-absolute top-50 end-0 translate-middle-y me-1">✕</a> @*clear searchbar*@
-            </div>
-            <button type="submit" class="btn btn-secondary">Klant zoeken</button>
-        </form>
+    @*Display searchbar *@
+    <form method="get">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center gap-2">
+                <div class="position-relative">
+                    <input type="text"
+                           name="search"
+                           value="@ViewBag.Search"
+                           class="form-control search-bar"
+                           placeholder="zoek naar klant" />
 
-        @* make customer*@
-        <a asp-action="Create" class="btn btn-primary">Klant aanmaken</a>
-    </div>
+                    <a asp-action="Index"
+                       class="btn btn-sm btn-light position-absolute top-50 end-0 translate-middle-y me-1">
+                        ✕
+                    </a>
+                </div>
+
+                <label class="mb-0">Sorteer op:</label>
+                <select name="sortField" class="form-select w-auto">
+                    <option value="id" selected="@(sortField == "id")">Klant ID</option>
+                    <option value="name" selected="@(sortField == "name")">Naam</option>
+                    <option value="address" selected="@(sortField == "address")">Adres</option>
+                    <option value="active" selected="@(sortField == "active")">Actief</option>
+                </select>
+                <select name="direction" class="form-select w-auto">
+                    <option value="asc" selected="@(direction == "asc")">Oplopend</option>
+                    <option value="desc" selected="@(direction == "desc")">Aflopend</option>
+                </select>
+
+                <button type="submit" class="btn btn-secondary">
+                    Zoek en filter
+                </button>
+            </div>
+
+            @* make customer *@
+            <a asp-action="Create" class="btn btn-primary">
+                Klant aanmaken
+            </a>
+        </div>
+    </form>
 
     @*Display list of customer by id, name, adress, active status*@
     <div class="card shadow-sm mt-4">
@@ -29,23 +60,30 @@
                 <thead class="table-dark">
                     <tr>
                         <th>
-                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
-                               asp-route-sortOrder="@ViewBag.IdSort" class="text-white text-decoration-none">
-                                Klant ID
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.IdSort"
+                               class="d-inline-flex align-items-center gap-1 text-white text-decoration-none text-nowrap">
+                                <span>Klant ID</span>
+
                                 @if (string.IsNullOrEmpty(ViewBag.CurrentSort))
                                 {
                                     <span>▼</span>
                                 }
                                 else if (ViewBag.CurrentSort == "id_desc")
-                                {          
+                                {
                                     <span>▲</span>
                                 }
                             </a>
                         </th>
+
                         <th>
-                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
-                               asp-route-sortOrder="@ViewBag.NameSort" class="text-white text-decoration-none">
-                                Naam
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.NameSort"
+                               class="d-inline-flex align-items-center gap-1 text-white text-decoration-none text-nowrap">
+                                <span>Naam</span>
+
                                 @if (ViewBag.CurrentSort == "name")
                                 {
                                     <span>▲</span>
@@ -56,10 +94,14 @@
                                 }
                             </a>
                         </th>
+
                         <th>
-                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
-                               asp-route-sortOrder="@ViewBag.AddressSort" class="text-white text-decoration-none">
-                                Adress
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.AddressSort"
+                               class="d-inline-flex align-items-center gap-1 text-white text-decoration-none text-nowrap">
+                                <span>Adres</span>
+
                                 @if (ViewBag.CurrentSort == "address")
                                 {
                                     <span>▼</span>
@@ -70,10 +112,14 @@
                                 }
                             </a>
                         </th>
+
                         <th>
-                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
-                               asp-route-sortOrder="@ViewBag.ActiveSort" class="text-white text-decoration-none">
-                                Actief
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.ActiveSort"
+                               class="d-inline-flex align-items-center gap-1 text-white text-decoration-none text-nowrap">
+                                <span>Actief</span>
+
                                 @if (ViewBag.CurrentSort == "active")
                                 {
                                     <span>▲</span>
@@ -84,9 +130,7 @@
                                 }
                             </a>
                         </th>
-                        <th class="text-end">
-                            Acties
-                        </th>
+                        <th class="text-end"> Acties</th>
                     </tr>
                 </thead>
 
@@ -100,15 +144,9 @@
                             <td>@customer.Active</td>
 
                             <td class="text-end">
-                                <a asp-action="Details" asp-route-id="@customer.Id" class="btn btn-primary">
-                                    Details
-                                </a>
-                                <a asp-action="Edit" asp-route-id="@customer.Id" class="btn btn-warning">
-                                    Bewerken
-                                </a>
-                                <a asp-action="Delete" asp-route-id="@customer.Id" class="btn btn-danger">
-                                    Verwijderen
-                                </a>
+                                <a asp-action="Details" asp-route-id="@customer.Id" class="btn btn-primary">Details</a>
+                                <a asp-action="Edit" asp-route-id="@customer.Id" class="btn btn-warning">Bewerken</a>
+                                <a asp-action="Delete" asp-route-id="@customer.Id" class="btn btn-danger">Verwijderen</a>
                             </td>
                         </tr>
                     }

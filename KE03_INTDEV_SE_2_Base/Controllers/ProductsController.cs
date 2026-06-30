@@ -17,9 +17,22 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index(string search, string sortOrder)
+        public async Task<IActionResult> Index(string search, string sortOrder, string sortField, string direction)
         {
             var query = _context.Products.AsQueryable();
+
+            // If the dropdown is used, convert it to the existing sortOrder
+            if (!string.IsNullOrEmpty(sortField))
+            {
+                sortOrder = sortField switch
+                {
+                    "id" => direction == "desc" ? "id_desc" : "",
+                    "name" => direction == "desc" ? "name_desc" : "name",
+                    "price" => direction == "desc" ? "price_desc" : "price",
+                    "description" => direction == "desc" ? "description_desc" : "description",
+                    _ => sortOrder
+                };
+            }
 
             if (!string.IsNullOrWhiteSpace(search))
             {
@@ -31,6 +44,9 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
 
             ViewBag.Search = search;
             ViewBag.CurrentSort = sortOrder;
+            ViewBag.SortField = sortField;
+            ViewBag.Direction = direction;
+
             ViewBag.IdSort = sortOrder == "id_desc" ? "" : "id_desc";
             ViewBag.NameSort = sortOrder == "name" ? "name_desc" : "name";
             ViewBag.PriceSort = sortOrder == "price" ? "price_desc" : "price";
@@ -41,7 +57,7 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
                 "id_desc" => query.OrderByDescending(p => p.Id),
                 "name" => query.OrderBy(p => p.Name),
                 "name_desc" => query.OrderByDescending(p => p.Name),
-                "price" => query.OrderBy(p => (double)p.Price), //double fixes sorting because price is deicimal
+                "price" => query.OrderBy(p => (double)p.Price), //double fixes sorting because price is decimal
                 "price_desc" => query.OrderByDescending(p => (double)p.Price),
                 "description" => query.OrderBy(p => p.Description),
                 "description_desc" => query.OrderByDescending(p => p.Description),

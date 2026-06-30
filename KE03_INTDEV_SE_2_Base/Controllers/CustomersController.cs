@@ -21,18 +21,38 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
 
         // GET: Customers
         // searchbar & sorting
-        public async Task<IActionResult> Index(string search, string sortOrder)
+        public async Task<IActionResult> Index(string search, string sortOrder, string sortField, string direction)
         {
             var query = _context.Customers.AsQueryable();
+
+            // If the dropdown is used, convert it to the existing sortOrder
+            if (!string.IsNullOrEmpty(sortField))
+            {
+                sortOrder = sortField switch
+                {
+                    "id" => direction == "desc" ? "id_desc" : "",
+                    "name" => direction == "desc" ? "name_desc" : "name",
+                    "address" => direction == "desc" ? "address_desc" : "address",
+                    "active" => direction == "desc" ? "active_desc" : "active",
+                    _ => sortOrder
+                };
+            }
 
             if (!string.IsNullOrWhiteSpace(search))
             {
                 search = search.Trim().ToLower();
-                query = query.Where(c => c.Id.ToString().Contains(search) || (c.Name ?? "").ToLower().Contains(search) || (c.Address ?? "").ToLower().Contains(search) || c.Active.ToString().Contains(search));
+                query = query.Where(c =>
+                    c.Id.ToString().Contains(search) ||
+                    (c.Name ?? "").ToLower().Contains(search) ||
+                    (c.Address ?? "").ToLower().Contains(search) ||
+                    c.Active.ToString().Contains(search));
             }
 
             ViewBag.Search = search;
-            ViewBag.CurrentSort = sortOrder; //for arrow direction
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.SortField = sortField;
+            ViewBag.Direction = direction;
+
             ViewBag.IdSort = sortOrder == "id_desc" ? "" : "id_desc";
             ViewBag.NameSort = sortOrder == "name" ? "name_desc" : "name";
             ViewBag.AddressSort = sortOrder == "address" ? "address_desc" : "address";
