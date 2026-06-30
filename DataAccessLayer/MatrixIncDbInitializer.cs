@@ -88,6 +88,64 @@ namespace DataAccessLayer
                     }
                 }
             }
+
+            // Seed drivers if missing
+            if (!context.Drivers.Any())
+            {
+                var drivers = new Driver[]
+                {
+                    new Driver { Name = "Agent Smith", BusNumber = "M-001", RouteNumber = "R1", Active = true },
+                    new Driver { Name = "Agent Johnson", BusNumber = "M-002", RouteNumber = "R2", Active = true },
+                    new Driver { Name = "The Architect", BusNumber = "M-003", RouteNumber = "R3", Active = false },
+                    new Driver { Name = "Oracle Courier", BusNumber = "M-004", RouteNumber = "R4", Active = true }
+                };
+                context.Drivers.AddRange(drivers);
+                context.SaveChanges();
+            }
+
+            // Seed klachten if missing
+            // Seed klachten if missing
+            if (!context.Klachten.Any())
+            {
+                var existingCustomers = context.Customers.ToArray();
+
+                if (existingCustomers.Length >= 3)
+                {
+                    var klachten = new Klacht[]
+                    {
+            new Klacht
+            {
+                Onderwerp = "Levering vertraagd in de Matrix",
+                Beschrijving = "Pakket blijft hangen in virtuele routing layer",
+                Status = "Open",
+                AangemaaktOp = DateTime.Now.AddDays(-3),
+
+                Customer = existingCustomers[0]
+            },
+            new Klacht
+            {
+                Onderwerp = "Defect EMP device ontvangen",
+                Beschrijving = "Klant kreeg een beschadigd EMP apparaat",
+                Status = "In behandeling",
+                AangemaaktOp = DateTime.Now.AddDays(-1),
+
+                Customer = existingCustomers[1]
+            },
+            new Klacht
+            {
+                Onderwerp = "Onjuiste levering",
+                Beschrijving = "Verkeerde onderdelen geleverd bij order",
+                Status = "Open",
+                AangemaaktOp = DateTime.Now.AddDays(-5),
+
+                Customer = existingCustomers[2]
+            }
+                    };
+
+                    context.Klachten.AddRange(klachten);
+                    context.SaveChanges();
+                }
+            }
         }
     }
 }

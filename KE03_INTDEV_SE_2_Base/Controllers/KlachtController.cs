@@ -17,9 +17,15 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string search, string sortOrder, string sortField, string direction)
+        public async Task<IActionResult> Index(string search, string sortOrder, string sortField, string direction, bool showClosed = false)
         {
-            var query = _context.Klachten.AsQueryable();
+            var query = _context.Klachten.Include(k => k.Customer).AsQueryable();
+
+            // FILTER: hide closed complaints unless checkbox is checked
+            if (!showClosed)
+            {
+                query = query.Where(k => k.Status != "Afgehandeld");
+            }
 
             // If dropdown is used, convert it to sortOrder (same pattern as Products)
             if (!string.IsNullOrEmpty(sortField))
@@ -43,7 +49,8 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
                     k.Id.ToString().Contains(search) ||
                     (k.Onderwerp ?? "").ToLower().Contains(search) ||
                     (k.Beschrijving ?? "").ToLower().Contains(search) ||
-                    (k.Status ?? "").ToLower().Contains(search));
+                    (k.Status ?? "").ToLower().Contains(search) ||
+                    (k.Customer.Name ?? "").ToLower().Contains(search));
             }
 
             // VIEWBAGS (same pattern as Products)
@@ -51,6 +58,7 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
             ViewBag.CurrentSort = sortOrder;
             ViewBag.SortField = sortField;
             ViewBag.Direction = direction;
+            ViewBag.ShowClosed = showClosed;
 
             ViewBag.IdSort = sortOrder == "id_desc" ? "id" : "id_desc";
             ViewBag.OnderwerpSort = sortOrder == "onderwerp" ? "onderwerp_desc" : "onderwerp";
@@ -85,6 +93,7 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
                 return NotFound();
 
             var klacht = await _context.Klachten
+                .Include(k => k.Customer)
                 .FirstOrDefaultAsync(k => k.Id == id);
 
             if (klacht == null)
@@ -96,13 +105,14 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
         // GET: Klachten/Create
         public IActionResult Create()
         {
+            ViewBag.Customers = _context.Customers.ToList();
             return View();
         }
 
         // POST: Klachten/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Onderwerp,Beschrijving,Status")] Klacht klacht)
+        public async Task<IActionResult> Create([Bind("Id,Onderwerp,Beschrijving,Status,CustomerId")] Klacht klacht)
         {
             if (ModelState.IsValid)
             {
@@ -114,6 +124,7 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            ViewBag.Customers = _context.Customers.ToList();
             return View(klacht);
         }
 
@@ -123,7 +134,9 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
             if (id == null)
                 return NotFound();
 
-            var klacht = await _context.Klachten.FindAsync(id);
+            var klacht = await _context.Klachten
+                .Include(k => k.Customer)
+                .FirstOrDefaultAsync(k => k.Id == id);
 
             if (klacht == null)
                 return NotFound();
@@ -134,30 +147,19 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
         // POST: Klachten/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Onderwerp,Beschrijving,Status,AangemaaktOp")] Klacht klacht)
+        public async Task<IActionResult> Edit(int id, string Status)
         {
-            if (id != klacht.Id)
+            var klacht = await _context.Klachten.FindAsync(id);
+
+            if (klacht == null)
                 return NotFound();
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(klacht);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!KlachtExists(klacht.Id))
-                        return NotFound();
-                    else
-                        throw;
-                }
+            // ONLY status update allowed
+            klacht.Status = Status;
 
-                return RedirectToAction(nameof(Index));
-            }
+            await _context.SaveChangesAsync();
 
-            return View(klacht);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Klachten/Delete/5
@@ -167,6 +169,7 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
                 return NotFound();
 
             var klacht = await _context.Klachten
+                .Include(k => k.Customer)
                 .FirstOrDefaultAsync(k => k.Id == id);
 
             if (klacht == null)

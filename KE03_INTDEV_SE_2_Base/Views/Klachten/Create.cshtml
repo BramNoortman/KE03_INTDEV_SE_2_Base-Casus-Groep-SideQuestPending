@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Klacht aanmaken";
+
+    var customers = ViewBag.Customers as List<DataAccessLayer.Models.Customer>;
 }
 
 <div class="driver-form">
@@ -10,7 +12,26 @@
     <div class="row">
         <div class="col-md-6">
             <form asp-action="Create" method="post">
+
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                @* KLANT DROPDOWN *@
+                <div class="mb-3">
+                    <label asp-for="CustomerId" class="form-label">Klant</label>
+
+                    <select asp-for="CustomerId" class="form-select">
+                        <option value="">-- Selecteer klant --</option>
+
+                        @foreach (var customer in customers)
+                        {
+                            <option value="@customer.Id">
+                                @customer.Name (ID: @customer.Id)
+                            </option>
+                        }
+                    </select>
+
+                    <span asp-validation-for="CustomerId" class="text-danger"></span>
+                </div>
 
                 <div class="mb-3">
                     <label asp-for="Onderwerp" class="form-label">Onderwerp</label>
@@ -24,9 +45,16 @@
                     <span asp-validation-for="Beschrijving" class="text-danger"></span>
                 </div>
 
+                @* STATUS DROPDOWN *@
                 <div class="mb-3">
                     <label asp-for="Status" class="form-label">Status</label>
-                    <input asp-for="Status" class="form-control" />
+
+                    <select asp-for="Status" class="form-select">
+                        <option value="Open">Open</option>
+                        <option value="In behandeling">In behandeling</option>
+                        <option value="Afgehandeld">Afgehandeld</option>
+                    </select>
+
                     <span asp-validation-for="Status" class="text-danger"></span>
                 </div>
 
@@ -34,11 +62,14 @@
                     <button type="submit" class="btn btn-primary">Aanmaken</button>
                     <a asp-action="Index" class="btn btn-secondary">Annuleren</a>
                 </div>
+
             </form>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

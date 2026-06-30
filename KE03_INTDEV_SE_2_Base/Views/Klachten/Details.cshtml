@@ -14,13 +14,16 @@
                     <strong>Klacht ID:</strong> @Model.Id
                 </div>
                 <div class="col-md-6">
-                    <strong>Status:</strong> @Model.Status
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-md-6">
                     <strong>Aangemaakt op:</strong> @Model.AangemaaktOp.ToString("yyyy-MM-dd HH:mm")
+                </div>
+                <div class="col-md-6">
+                    <strong>Klant ID:</strong> @Model.Customer?.Id
+                </div>
+                <div class="col-md-6">
+                    <strong>Klant naam:</strong> @Model.Customer?.Name
+                </div>
+                <div class="col-md-6">
+                    <strong>Status:</strong> @Model.Status
                 </div>
             </div>
 

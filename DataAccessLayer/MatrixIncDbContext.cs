@@ -49,6 +49,13 @@ namespace DataAccessLayer
                 .HasMany(p => p.Products)
                 .WithMany(p => p.Parts);
 
+            //  Klacht Customer relation
+            modelBuilder.Entity<Klacht>()
+            .HasOne(k => k.Customer)
+            .WithMany()
+            .HasForeignKey(k => k.CustomerId)
+            .OnDelete(DeleteBehavior.SetNull);
+
             base.OnModelCreating(modelBuilder);
         }
     }

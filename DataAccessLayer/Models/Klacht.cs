@@ -18,5 +18,8 @@ namespace DataAccessLayer.Models
         public string Status { get; set; } = "Open";
 
         public DateTime AangemaaktOp { get; set; } = DateTime.Now;
+
+        public int CustomerId { get; set; }
+        public Customer? Customer { get; set; }
     }
 }

@@ -10,11 +10,20 @@
         Weet je zeker dat je de klacht "@Model.Onderwerp" wilt verwijderen?
     </h3>
 
-    <div class="card shadow-sm">
+    <div class="card shadow-sm mb-4">
         <div class="card-body">
             <div class="row mb-3">
                 <div class="col-md-6">
                     <strong>Klacht ID:</strong> @Model.Id
+                </div>
+                <div class="col-md-6">
+                    <strong>Aangemaakt op:</strong> @Model.AangemaaktOp.ToString("yyyy-MM-dd HH:mm")
+                </div>
+                <div class="col-md-6">
+                    <strong>Klant ID:</strong> @Model.Customer?.Id
+                </div>
+                <div class="col-md-6">
+                    <strong>Klant naam:</strong> @Model.Customer?.Name
                 </div>
                 <div class="col-md-6">
                     <strong>Status:</strong> @Model.Status
@@ -23,19 +32,8 @@
 
             <div class="row mb-3">
                 <div class="col-md-12">
-                    <strong>Onderwerp:</strong> @Model.Onderwerp
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-md-12">
-                    <strong>Beschrijving:</strong> @Model.Beschrijving
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <strong>Aangemaakt op:</strong> @Model.AangemaaktOp
+                    <strong>Beschrijving:</strong>
+                    <p class="mt-2">@Model.Beschrijving</p>
                 </div>
             </div>
         </div>
