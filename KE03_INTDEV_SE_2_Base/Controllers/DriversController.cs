@@ -20,30 +20,44 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
         }
 
         // GET: Drivers
-        public async Task<IActionResult> Index(string search, string sortOrder)
+        public async Task<IActionResult> Index(string search, string sortOrder, string sortField, string direction)
         {
             var query = _context.Drivers.AsQueryable();
 
-            // Search across driver ID, name, bus number, route, and active status
+            // dropdown
+            if (!string.IsNullOrEmpty(sortField))
+            {
+                sortOrder = sortField switch
+                {
+                    "id" => direction == "desc" ? "id_desc" : "",
+                    "name" => direction == "desc" ? "name_desc" : "name",
+                    "busnumber" => direction == "desc" ? "busnumber_desc" : "busnumber",
+                    "routenumber" => direction == "desc" ? "routenumber_desc" : "routenumber",
+                    "active" => direction == "desc" ? "active_desc" : "active",
+                    _ => sortOrder
+                };
+            }
+
+            // search
             if (!string.IsNullOrWhiteSpace(search))
             {
                 search = search.Trim().ToLower();
-                query = query.Where(d => d.Id.ToString().Contains(search) || 
-                    (d.Name ?? "").ToLower().Contains(search) || 
-                    (d.BusNumber ?? "").ToLower().Contains(search) || 
-                    (d.RouteNumber ?? "").ToLower().Contains(search) || 
-                    d.Active.ToString().Contains(search));
+
+                query = query.Where(d =>
+                    d.Id.ToString().Contains(search) ||
+                    (d.Name ?? "").ToLower().Contains(search) ||
+                    (d.BusNumber ?? "").ToLower().Contains(search) ||
+                    (d.RouteNumber ?? "").ToLower().Contains(search) ||
+                    d.Active.ToString().ToLower().Contains(search)
+                );
             }
 
             ViewBag.Search = search;
             ViewBag.CurrentSort = sortOrder;
-            ViewBag.IdSort = sortOrder == "id_desc" ? "" : "id_desc";
-            ViewBag.NameSort = sortOrder == "name" ? "name_desc" : "name";
-            ViewBag.BusNumberSort = sortOrder == "busnumber" ? "busnumber_desc" : "busnumber";
-            ViewBag.RouteNumberSort = sortOrder == "routenumber" ? "routenumber_desc" : "routenumber";
-            ViewBag.ActiveSort = sortOrder == "active" ? "active_desc" : "active";
+            ViewBag.SortField = sortField;
+            ViewBag.Direction = direction;
 
-            // Apply sorting based on sortOrder parameter
+            // sorting
             query = sortOrder switch
             {
                 "id_desc" => query.OrderByDescending(d => d.Id),

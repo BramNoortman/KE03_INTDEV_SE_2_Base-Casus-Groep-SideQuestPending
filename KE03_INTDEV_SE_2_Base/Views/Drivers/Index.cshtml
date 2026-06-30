@@ -2,25 +2,62 @@
 
 @{
     ViewData["Title"] = "Bezorgeroverzicht";
+
+    var sortField = ViewBag.SortField as string;
+    var direction = ViewBag.Direction as string;
 }
+
 <div class="drivers-page">
     <h1 class="mb-4">
         Bezorgers
     </h1>
 
     @*Display searchbar *@
-    <div class="d-flex justify-content-between align-items-center products-toolbar">
-        <form method="get" class="products-toolbar">
-            <div class="position-relative">
-                <input type="text" name="search" value="@ViewBag.Search" class="form-control search-bar" placeholder="zoek naar bezorger" />
-                <a asp-action="Index" class="btn btn-sm btn-light position-absolute top-50 end-0 translate-middle-y me-1">✕</a> @*clear searchbar*@
-            </div>
-            <button type="submit" class="btn btn-secondary">Bezorger zoeken</button>
-        </form>
+    <form method="get">
+        <div class="d-flex justify-content-between align-items-center mb-4">
 
-        @* make driver*@
-        <a asp-action="Create" class="btn btn-primary">Bezorger aanmaken</a>
-    </div>
+            <div class="d-flex align-items-center gap-2">
+
+                <div class="position-relative">
+                    <input type="text"
+                           name="search"
+                           value="@ViewBag.Search"
+                           class="form-control search-bar"
+                           placeholder="zoek naar bezorger" />
+
+                    <a asp-action="Index"
+                       class="btn btn-sm btn-light position-absolute top-50 end-0 translate-middle-y me-1">
+                        ✕
+                    </a> @*clear searchbar*@
+                </div>
+
+                <label class="mb-0">Sorteer op:</label>
+
+                <select name="sortField" class="form-select w-auto">
+                    <option value="id" selected="@(sortField == "id")">ID</option>
+                    <option value="name" selected="@(sortField == "name")">Naam</option>
+                    <option value="busnumber" selected="@(sortField == "busnumber")">Bus nummer</option>
+                    <option value="routenumber" selected="@(sortField == "routenumber")">Route nummer</option>
+                    <option value="active" selected="@(sortField == "active")">Actief</option>
+                </select>
+
+                <select name="direction" class="form-select w-auto">
+                    <option value="asc" selected="@(direction == "asc")">Oplopend</option>
+                    <option value="desc" selected="@(direction == "desc")">Aflopend</option>
+                </select>
+
+                <button type="submit" class="btn btn-secondary">
+                    Bezorger zoeken
+                </button>
+
+            </div>
+
+            @* make driver *@
+            <a asp-action="Create" class="btn btn-primary">
+                Bezorger aanmaken
+            </a>
+        </div>
+    </form>
 
     @*Display list of drivers by id, name, bus number, route number, active status*@
     <div class="card shadow-sm mt-4">
@@ -29,22 +66,27 @@
                 <thead class="table-dark">
                     <tr>
                         <th>
-                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
-                               asp-route-sortOrder="@ViewBag.IdSort" class="text-white text-decoration-none">
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.IdSort"
+                               class="text-white text-decoration-none">
                                 Bezorger ID
                                 @if (string.IsNullOrEmpty(ViewBag.CurrentSort))
                                 {
                                     <span>▼</span>
                                 }
                                 else if (ViewBag.CurrentSort == "id_desc")
-                                {          
+                                {
                                     <span>▲</span>
                                 }
                             </a>
                         </th>
+
                         <th>
-                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
-                               asp-route-sortOrder="@ViewBag.NameSort" class="text-white text-decoration-none">
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.NameSort"
+                               class="text-white text-decoration-none">
                                 Naam
                                 @if (ViewBag.CurrentSort == "name")
                                 {
@@ -56,9 +98,12 @@
                                 }
                             </a>
                         </th>
+
                         <th>
-                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
-                               asp-route-sortOrder="@ViewBag.BusNumberSort" class="text-white text-decoration-none">
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.BusNumberSort"
+                               class="text-white text-decoration-none">
                                 Bus nummer
                                 @if (ViewBag.CurrentSort == "busnumber")
                                 {
@@ -70,9 +115,12 @@
                                 }
                             </a>
                         </th>
+
                         <th>
-                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
-                               asp-route-sortOrder="@ViewBag.RouteNumberSort" class="text-white text-decoration-none">
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.RouteNumberSort"
+                               class="text-white text-decoration-none">
                                 Route nummer
                                 @if (ViewBag.CurrentSort == "routenumber")
                                 {
@@ -84,9 +132,12 @@
                                 }
                             </a>
                         </th>
+
                         <th>
-                            <a asp-action="Index" asp-route-search="@ViewBag.Search"
-                               asp-route-sortOrder="@ViewBag.ActiveSort" class="text-white text-decoration-none">
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-sortOrder="@ViewBag.ActiveSort"
+                               class="text-white text-decoration-none">
                                 Actief
                                 @if (ViewBag.CurrentSort == "active")
                                 {
@@ -98,6 +149,7 @@
                                 }
                             </a>
                         </th>
+
                         <th class="text-end">
                             Acties
                         </th>

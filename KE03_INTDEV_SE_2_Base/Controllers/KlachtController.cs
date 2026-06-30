@@ -17,9 +17,22 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string search, string sortOrder)
+        public async Task<IActionResult> Index(string search, string sortOrder, string sortField, string direction)
         {
             var query = _context.Klachten.AsQueryable();
+
+            // If dropdown is used, convert it to sortOrder (same pattern as Products)
+            if (!string.IsNullOrEmpty(sortField))
+            {
+                sortOrder = sortField switch
+                {
+                    "id" => direction == "desc" ? "id_desc" : "id",
+                    "onderwerp" => direction == "desc" ? "onderwerp_desc" : "onderwerp",
+                    "status" => direction == "desc" ? "status_desc" : "status",
+                    "date" => direction == "desc" ? "date_desc" : "date",
+                    _ => sortOrder
+                };
+            }
 
             // SEARCH
             if (!string.IsNullOrWhiteSpace(search))
@@ -33,9 +46,11 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
                     (k.Status ?? "").ToLower().Contains(search));
             }
 
-            // VIEWBAGS (needed for arrows + links)
+            // VIEWBAGS (same pattern as Products)
             ViewBag.Search = search;
             ViewBag.CurrentSort = sortOrder;
+            ViewBag.SortField = sortField;
+            ViewBag.Direction = direction;
 
             ViewBag.IdSort = sortOrder == "id_desc" ? "id" : "id_desc";
             ViewBag.OnderwerpSort = sortOrder == "onderwerp" ? "onderwerp_desc" : "onderwerp";
