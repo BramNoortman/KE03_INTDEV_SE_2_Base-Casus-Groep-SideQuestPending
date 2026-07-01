@@ -16,7 +16,7 @@
             <div class="metric-content">
                 <p class="metric-label">Klachten</p>
                 <h3 class="metric-value">32</h3>
-                <p class="metric-change positive">↑ 12% deze maand</p>
+                <p class="metric-change negative">↑ 7% deze maand</p>
             </div>
         </div>
     </a>
@@ -25,9 +25,9 @@
         <div class="metric-card">
             <div class="metric-icon orders-icon">📦</div>
             <div class="metric-content">
-                <p class="metric-label">Bestellingen</p>
-                <h3 class="metric-value">248</h3>
-                <p class="metric-change positive">↑ 8% deze maand</p>
+                <p class="metric-label">Orders</p>
+                <h3 class="metric-value">125</h3>
+                <p class="metric-change positive">↑ 10% deze maand</p>
             </div>
         </div>
     </a>
@@ -37,7 +37,7 @@
             <div class="metric-icon customers-icon">👥</div>
             <div class="metric-content">
                 <p class="metric-label">Klanten</p>
-                <h3 class="metric-value">1,824</h3>
+                <h3 class="metric-value">1,055</h3>
                 <p class="metric-change positive">↑ 5% deze maand</p>
             </div>
         </div>
@@ -48,7 +48,7 @@
             <div class="metric-icon products-icon">🛍️</div>
             <div class="metric-content">
                 <p class="metric-label">Producten</p>
-                <h3 class="metric-value">342</h3>
+                <h3 class="metric-value">302</h3>
                 <p class="metric-change neutral">= geen verandering</p>
             </div>
         </div>
@@ -59,21 +59,21 @@
 <div class="dashboard-section">
     <h2>Snelle Acties</h2>
     <div class="actions-grid">
-        <a href="@Url.Action("Create", "Products")" class="action-card">
-            <span class="action-icon">➕</span>
-            <span class="action-text">Nieuw Product</span>
+        <a href="@Url.Action("Index", "Klachten")" class="action-card">
+            <span class="action-icon">📊</span>
+            <span class="action-text">Klachten beheren</span>
         </a>
-        <a href="@Url.Action("Index", "Customers")" class="action-card">
-            <span class="action-icon">📧</span>
-            <span class="action-text">Klanten Beheren</span>
+        <a href="@Url.Action("Index", "Order")" class="action-card">
+            <span class="action-icon">📦</span>
+            <span class="action-text">Orders beheren</span>
         </a>
         <a href="@Url.Action("Index", "Products")" class="action-card">
-            <span class="action-icon">📋</span>
-            <span class="action-text">Producten Bekijken</span>
+            <span class="action-icon">🛍️</span>
+            <span class="action-text">Producten beheren</span>
         </a>
-        <a href="#" class="action-card">
-            <span class="action-icon">⚙️</span>
-            <span class="action-text">Instellingen</span>
+        <a href="@Url.Action("Index", "Warehouse")" class="action-card">
+            <span class="action-icon">📋</span>
+            <span class="action-text">Depot overzicht</span>
         </a>
     </div>
 </div>
@@ -85,7 +85,7 @@
 <div class="dashboard-section">
     <div class="section-header">
         <h2>Recente Bestellingen</h2>
-        <a href="@Url.Action("Index", "Order")" class="btn btn-sm btn-primary">Alle bestellingen</a>
+        <a href="@Url.Action("Index", "Order")" class="btn btn-sm btn-primary">Alle orders</a>
     </div>
     <table class="table table-hover dashboard-table">
         <thead>

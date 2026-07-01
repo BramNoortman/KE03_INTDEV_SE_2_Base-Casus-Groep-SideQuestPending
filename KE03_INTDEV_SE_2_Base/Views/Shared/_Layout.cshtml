@@ -12,38 +12,39 @@
 <div class="admin-layout">
     <aside class="sidebar">
         <div class="sidebar-header">
-            <h3>Admin Panel</h3>
+            <h3>Matrix Inc. Backoffice</h3>
         </div>
 
+        <!-- when on a views pages we check to highlight said view for visibility and mapping-->
         <nav class="sidebar-nav">
-            <a asp-controller="Home" asp-action="Index">
+            <a asp-controller="Home" asp-action="Index" data-controller="Home">
                 Dashboard
             </a>
-            <a asp-controller="Order" asp-action="Index">
+            <a asp-controller="Order" asp-action="Index" data-controller="Order">
                 Orders
             </a>
-            <a asp-controller="Klachten" asp-action="Index">
-            Klachten
-            </a>
-            <a asp-controller="Finance" asp-action="Index">
-                Financiën
-            </a>
-            <a asp-controller="Products" asp-action="Index">
+            <a asp-controller="Products" asp-action="Index" data-controller="Products">
                 Producten
             </a>
-            <a asp-controller="Customers" asp-action="Index">
-                Klanten
-            </a>
-            <a asp-controller="Drivers" asp-action="Index">
-                Bezorgers
-            </a>
-            <a asp-controller="Warehouse" asp-action="Index">
+            <a asp-controller="Warehouse" asp-action="Index" data-controller="Warehouse">
                 Depot
             </a>
-            <a asp-controller="WorkInProgress" asp-action="Index">
+            <a asp-controller="Drivers" asp-action="Index" data-controller="Drivers">
+                Bezorgers
+            </a>
+            <a asp-controller="Customers" asp-action="Index" data-controller="Customers">
+                Klanten
+            </a>
+            <a asp-controller="Klachten" asp-action="Index" data-controller="Klachten">
+                Klachten
+            </a>
+            <a asp-controller="Finance" asp-action="Index" data-controller="Finance">
+                Financiën
+            </a>
+            <a asp-controller="WorkInProgress" asp-action="Index" data-controller="WorkInProgress">
                 Instellingen
             </a>
-            <a asp-controller="WorkInProgress" asp-action="Index">
+            <a asp-controller="WorkInProgress" asp-action="Index" data-controller="WorkInProgress">
                 Uitloggen
             </a>
         </nav>

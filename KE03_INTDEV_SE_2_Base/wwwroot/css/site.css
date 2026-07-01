@@ -52,11 +52,21 @@ body {
     text-decoration: none;
     padding: 12px 14px;
     border-radius: 8px;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-nav a.active-nav {
+    background-color: #60a5fa;
+    color: white;
+    font-weight: 600;
 }
 
 .sidebar-nav a:hover {
     background-color: #374151;
+}
+
+.sidebar-nav a.active-nav:hover {
+    background-color: #3b82f6;
 }
 
 .logout-link {
