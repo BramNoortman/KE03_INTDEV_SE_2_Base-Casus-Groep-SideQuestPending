@@ -22,19 +22,79 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
         }
 
         // GET: Order
-        public async Task<IActionResult> Index(string search)
+        public async Task<IActionResult> Index(
+            string search,
+            int? status,
+            int? customerId,
+            DateTime? dateFrom,
+            DateTime? dateTo)
         {
-            var query = _context.Orders.Include(o => o.Customer).AsQueryable();
+            var query = _context.Orders
+                .Include(o => o.Customer)
+                .AsQueryable();
 
-            // Search across ID, date, customer, and status fields
+            // Tekstzoek
             if (!string.IsNullOrWhiteSpace(search))
             {
                 search = search.Trim().ToLower();
-                query = query.Where(o => o.Id.ToString().Contains(search) || o.OrderDate.ToString().Contains(search) || o.CustomerId.ToString().Contains(search) || (o.Customer.Name ?? "").ToLower().Contains(search) || o.Status.ToString().ToLower().Contains(search));
+
+                query = query.Where(o =>
+                    o.Id.ToString().Contains(search) ||
+                    o.OrderDate.ToString().Contains(search) ||
+                    o.CustomerId.ToString().Contains(search) ||
+                    (o.Customer.Name ?? "").ToLower().Contains(search) ||
+                    o.Status.ToString().ToLower().Contains(search)
+                );
             }
 
+            // Filter op status
+            if (status.HasValue)
+            {
+                query = query.Where(o => (int)o.Status == status.Value);
+                ViewBag.Status = status.Value;
+            }
+
+            // Filter op klant
+            if (customerId.HasValue)
+            {
+                query = query.Where(o => o.CustomerId == customerId.Value);
+                ViewBag.CustomerId = customerId.Value;
+            }
+
+            // Filter op datum range
+            if (dateFrom.HasValue)
+            {
+                var df = dateFrom.Value.Date;
+                query = query.Where(o => o.OrderDate >= df);
+                ViewBag.DateFrom = df.ToString("yyyy-MM-dd");
+            }
+
+            if (dateTo.HasValue)
+            {
+                var dt = dateTo.Value.Date.AddDays(1).AddTicks(-1);
+                query = query.Where(o => o.OrderDate <= dt);
+                ViewBag.DateTo = dateTo.Value.ToString("yyyy-MM-dd");
+            }
+
+            // Voeg klantlijst en statuslijst toe voor de view
+            var customers = await _context.Customers.ToListAsync();
+            ViewData["CustomerListItems"] = customers;
+
+            var statusItems = new[]
+            {
+                new { Value = (int)OrderStatus.NogNietVerzonden, Text = "Nog niet verzonden" },
+                new { Value = (int)OrderStatus.InDeBus, Text = "In de bus" },
+                new { Value = (int)OrderStatus.Onderweg, Text = "Onderweg" },
+                new { Value = (int)OrderStatus.Bezorgd, Text = "Bezorgd" }
+            };
+
+            ViewData["StatusListItems"] = statusItems;
+
             ViewBag.Search = search;
-            var orders = await query.OrderBy(o => o.Id).ToListAsync();
+
+            var orders = await query
+                .OrderBy(o => o.Id)
+                .ToListAsync();
 
             return View(orders);
         }
@@ -52,6 +112,7 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
                 .Include(o => o.Items)
                     .ThenInclude(oi => oi.Product)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (order == null)
             {
                 return NotFound();
@@ -65,26 +126,29 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
         {
             var customers = await _context.Customers.ToListAsync();
             ViewData["CustomerList"] = new SelectList(customers, "Id", "Name");
+
             var products = await _context.Products.ToListAsync();
-            _logger.LogInformation("Create GET - products count={Count}", products?.Count ?? 0);
             ViewData["ProductListItems"] = products;
-            
+
             // Status dropdown with Dutch labels (NogNietVerzonden=0, Onderweg=1, Bezorgd=2)
-            var statusItems = new[] {
+            var statusItems = new[]
+            {
                 new { Value = (int)OrderStatus.NogNietVerzonden, Text = "Nog niet verzonden" },
                 new { Value = (int)OrderStatus.Onderweg, Text = "Onderweg" },
                 new { Value = (int)OrderStatus.Bezorgd, Text = "Bezorgd" }
             };
             ViewData["StatusList"] = new SelectList(statusItems, "Value", "Text");
-            
+
             // Rack assignment dropdown (A, B, C, D)
-            var rackItems = new[] {
+            var rackItems = new[]
+            {
                 new { Value = 'A', Text = "Rek A" },
                 new { Value = 'B', Text = "Rek B" },
                 new { Value = 'C', Text = "Rek C" },
                 new { Value = 'D', Text = "Rek D" }
             };
             ViewData["RackList"] = new SelectList(rackItems, "Value", "Text");
+
             return View();
         }
 
@@ -101,42 +165,39 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("ModelState invalid on Create: {Errors}", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-                // Reload customers and products for display
+
                 var customers = await _context.Customers.ToListAsync();
                 ViewData["CustomerList"] = new SelectList(customers, "Id", "Name", order.CustomerId);
+
                 var products = await _context.Products.ToListAsync();
                 ViewData["ProductListItems"] = products;
-                var statusItems = new[] {
-                    new { Value = (int)OrderStatus.NogNietVerzonden, Text = "Nog niet verzonden" },
-                    new { Value = (int)OrderStatus.Onderweg, Text = "Onderweg" },
-                    new { Value = (int)OrderStatus.Bezorgd, Text = "Bezorgd" }
-                };
-                ViewData["StatusList"] = new SelectList(statusItems, "Value", "Text", (int)order.Status);
-                var rackItems = new[] {
-                    new { Value = 'A', Text = "Rek A" },
-                    new { Value = 'B', Text = "Rek B" },
-                    new { Value = 'C', Text = "Rek C" },
-                    new { Value = 'D', Text = "Rek D" }
-                };
-                ViewData["RackList"] = new SelectList(rackItems, "Value", "Text", order.Rack);
+
                 return View(order);
             }
 
             // Read quantities from form fields (format: quantity_{productId}) and create OrderItems
             // Only adds items with qty > 0 to avoid empty order lines
             var allProducts = await _context.Products.Select(p => p.Id).ToListAsync();
+
             foreach (var pid in allProducts)
             {
-                var qtyStr = Request.Form[$"quantity_{pid}"] .FirstOrDefault();
+                var qtyStr = Request.Form[$"quantity_{pid}"].FirstOrDefault();
+
                 if (int.TryParse(qtyStr, out var qty) && qty > 0)
                 {
-                    order.Items.Add(new OrderItem { ProductId = pid, Quantity = qty });
+                    order.Items.Add(new OrderItem
+                    {
+                        ProductId = pid,
+                        Quantity = qty
+                    });
                 }
             }
 
             _context.Add(order);
             await _context.SaveChangesAsync();
+
             _logger.LogInformation("Order created with Id {Id} and {Count} items", order.Id, order.Items.Count);
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -152,27 +213,35 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
                 .Include(o => o.Items)
                     .ThenInclude(oi => oi.Product)
                 .FirstOrDefaultAsync(o => o.Id == id);
+
             if (order == null)
             {
                 return NotFound();
             }
+
             var customers = await _context.Customers.ToListAsync();
             ViewData["CustomerList"] = new SelectList(customers, "Id", "Name", order.CustomerId);
+
             var products = await _context.Products.ToListAsync();
             ViewData["ProductListItems"] = products;
-            var statusItems = new[] {
+
+            var statusItems = new[]
+            {
                 new { Value = (int)OrderStatus.NogNietVerzonden, Text = "Nog niet verzonden" },
                 new { Value = (int)OrderStatus.Onderweg, Text = "Onderweg" },
                 new { Value = (int)OrderStatus.Bezorgd, Text = "Bezorgd" }
             };
             ViewData["StatusList"] = new SelectList(statusItems, "Value", "Text", (int)order.Status);
-            var rackItems = new[] {
+
+            var rackItems = new[]
+            {
                 new { Value = 'A', Text = "Rek A" },
                 new { Value = 'B', Text = "Rek B" },
                 new { Value = 'C', Text = "Rek C" },
                 new { Value = 'D', Text = "Rek D" }
             };
             ViewData["RackList"] = new SelectList(rackItems, "Value", "Text", order.Rack);
+
             return View(order);
         }
 
@@ -198,6 +267,7 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
                     var existingOrder = await _context.Orders
                         .Include(o => o.Items)
                         .FirstOrDefaultAsync(o => o.Id == id);
+
                     if (existingOrder == null)
                     {
                         return NotFound();
@@ -208,23 +278,30 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
                     existingOrder.CustomerId = order.CustomerId;
                     existingOrder.Status = order.Status;
                     existingOrder.Rack = order.Rack;
-                    
 
                     // read quantities for all products and replace items accordingly
                     var allProducts = await _context.Products.Select(p => p.Id).ToListAsync();
                     var newItems = new List<OrderItem>();
+
                     foreach (var pid in allProducts)
                     {
                         var packed = Request.Form[$"packed_{pid}"] == "true";
-                        var qtyStr = Request.Form[$"quantity_{pid}"] .FirstOrDefault();
+                        var qtyStr = Request.Form[$"quantity_{pid}"].FirstOrDefault();
+
                         if (int.TryParse(qtyStr, out var qty) && qty > 0)
                         {
-                            newItems.Add(new OrderItem { ProductId = pid, Quantity = qty, Packed = packed });
+                            newItems.Add(new OrderItem
+                            {
+                                ProductId = pid,
+                                Quantity = qty,
+                                Packed = packed
+                            });
                         }
                     }
 
                     // replace items
                     existingOrder.Items.Clear();
+
                     foreach (var it in newItems)
                     {
                         existingOrder.Items.Add(it);
@@ -243,26 +320,36 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
                         throw;
                     }
                 }
+
                 _logger.LogInformation("Order {Id} updated", order.Id);
+
                 return RedirectToAction(nameof(Index));
             }
 
             _logger.LogWarning("ModelState invalid on Edit: {Errors}", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+
             var customers2 = await _context.Customers.ToListAsync();
             ViewData["CustomerList"] = new SelectList(customers2, "Id", "Name", order.CustomerId);
-            var statusItems = new[] {
+
+            var statusItems2 = new[]
+            {
                 new { Value = (int)OrderStatus.NogNietVerzonden, Text = "Nog niet verzonden" },
                 new { Value = (int)OrderStatus.InDeBus, Text = "Onderweg" },
                 new { Value = (int)OrderStatus.Onderweg, Text = "Bezorgd" }
             };
-            ViewData["StatusList"] = new SelectList(statusItems, "Value", "Text", (int)order.Status);
-            var rackItems = new[] {
+
+            ViewData["StatusList"] = new SelectList(statusItems2, "Value", "Text", (int)order.Status);
+
+            var rackItems2 = new[]
+            {
                 new { Value = 'A', Text = "Rek A" },
                 new { Value = 'B', Text = "Rek B" },
                 new { Value = 'C', Text = "Rek C" },
                 new { Value = 'D', Text = "Rek D" }
             };
-            ViewData["RackList"] = new SelectList(rackItems, "Value", "Text", order.Rack);
+
+            ViewData["RackList"] = new SelectList(rackItems2, "Value", "Text", order.Rack);
+
             return View(order);
         }
 
@@ -277,6 +364,7 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
             var order = await _context.Orders
                 .Include(o => o.Customer)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (order == null)
             {
                 return NotFound();
@@ -291,12 +379,14 @@ namespace KE03_INTDEV_SE_2_Base.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var order = await _context.Orders.FindAsync(id);
+
             if (order != null)
             {
                 _context.Orders.Remove(order);
             }
 
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

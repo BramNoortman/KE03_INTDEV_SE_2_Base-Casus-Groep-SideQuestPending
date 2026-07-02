@@ -9,9 +9,61 @@
         Orders
     </h1>
 
-    <form method="get" class="products-toolbar">
-        <input type="text" name="search" value="@ViewBag.Search" class="form-control search-bar" placeholder="zoek order"/>
-        <a asp-action="Create" class="btn btn-primary">Nieuwe Order</a>
+    <form method="get" class="products-toolbar d-flex flex-wrap gap-2 align-items-center">
+
+        <input type="text"
+               name="search"
+               value="@ViewBag.Search"
+               class="form-control search-bar"
+               placeholder="zoek order" />
+
+        <select name="status" class="form-select" style="width:200px">
+            <option value="">Alle statussen</option>
+
+            @foreach (var s in (IEnumerable<dynamic>)ViewData["StatusListItems"])
+            {
+                var val = (int)s.Value;
+
+                <option value="@val" selected="@(ViewBag.Status != null && ViewBag.Status == val)">
+                    @s.Text
+                </option>
+            }
+        </select>
+
+        <select name="customerId" class="form-select" style="width:220px">
+            <option value="">Alle klanten</option>
+
+            @foreach (var c in (IEnumerable<dynamic>)ViewData["CustomerListItems"])
+            {
+                <option value="@c.Id" selected="@(ViewBag.CustomerId != null && ViewBag.CustomerId == c.Id)">
+                    @c.Name
+                </option>
+            }
+        </select>
+
+        <input type="date"
+               name="dateFrom"
+               value="@ViewBag.DateFrom"
+               class="form-control"
+               style="width:160px" />
+
+        <input type="date"
+               name="dateTo"
+               value="@ViewBag.DateTo"
+               class="form-control"
+               style="width:160px" />
+
+        <button type="submit" class="btn btn-secondary">
+            Filter
+        </button>
+
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            Reset
+        </a>
+
+        <a asp-action="Create" class="btn btn-primary ms-auto">
+            Nieuwe Order
+        </a>
     </form>
 
     <div class="card shadow-sm mt-4">
@@ -37,7 +89,7 @@
                             <td>@order.Id</td>
                             <td>@order.OrderDate</td>
                             <td>@order.CustomerId</td>
-                            <td>@order.Customer.Name</td>
+                            <td>@order.Customer?.Name</td>
                             <td>@order.Status</td>
 
                             <td class="text-end">
